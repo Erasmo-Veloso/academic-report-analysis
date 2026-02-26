@@ -12,7 +12,10 @@ export default function Page() {
 
   const handleNewAnalysis = () => {
     const newChat = createChat();
-    router.push(`/analise/${newChat.id}`);
+    // Aguarda um tick do event loop para garantir sincronização de estado
+    setTimeout(() => {
+      router.push(`/analise/${newChat.id}`);
+    }, 0);
   };
 
   return (

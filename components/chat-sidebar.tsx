@@ -13,7 +13,9 @@ export function ChatSidebar() {
 
   const handleNewChat = () => {
     const newChat = createChat();
-    router.push(`/analise/${newChat.id}`);
+    setTimeout(() => {
+      router.push(`/analise/${newChat.id}`);
+    }, 0);
   };
 
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
