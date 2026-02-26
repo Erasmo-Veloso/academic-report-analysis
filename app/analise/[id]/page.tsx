@@ -1,33 +1,34 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { useRouter } from 'next/navigation';
 import { HomePageContent } from '@/components/home-page-content';
 
 interface AnalysisPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function AnalysisPage({ params }: AnalysisPageProps) {
+  const resolvedParams = use(params);
   const { chats, setCurrentChat, currentChatId } = useChat();
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const chat = chats.find(c => c.id === params.id);
+    const chat = chats.find(c => c.id === resolvedParams.id);
     if (chat) {
-      setCurrentChat(params.id);
+      setCurrentChat(resolvedParams.id);
       setIsReady(true);
     } else {
       router.push('/');
     }
-  }, [params.id, chats, setCurrentChat, router]);
+  }, [resolvedParams.id, chats, setCurrentChat, router]);
 
   // Wait until currentChatId matches the URL id
-  if (!isReady || currentChatId !== params.id) {
+  if (!isReady || currentChatId !== resolvedParams.id) {
     return (
       <main className="flex-1 overflow-auto bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Carregando análise...</p>
