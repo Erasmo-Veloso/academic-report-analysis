@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Chat, ChatConfig, Message, PageData } from '@/lib/types';
+import { Chat, ChatConfig, Message, PagedDocument } from '@/lib/types';
 
 interface ChatContextType {
   chats: Chat[];
@@ -15,7 +15,7 @@ interface ChatContextType {
   
   addMessage: (message: Message) => void;
   updateChatDocument: (id: string, content: string, fileName: string) => void;
-  updateChatPages: (id: string, pages: PageData[], fileName: string) => void;
+  updateChatPages: (id: string, pages: PagedDocument[], fileName: string) => void;
   updateChatConfig: (id: string, config: Partial<ChatConfig>) => void;
   
   getGeminiKey: () => string | null;
@@ -59,7 +59,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       title: `Análise - ${new Date().toLocaleDateString('pt-BR')}`,
       config,
       messages: [],
-      pages: [],
+      documentPages: [],
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -117,13 +117,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const updateChatPages = (id: string, pages: PageData[], fileName: string) => {
+  const updateChatPages = (id: string, pages: PagedDocument[], fileName: string) => {
     setChats(prev =>
       prev.map(c =>
         c.id === id
           ? {
               ...c,
-              pages,
+              documentPages: pages,
               documentFileName: fileName,
               updatedAt: Date.now(),
             }

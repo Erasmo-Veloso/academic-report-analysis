@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { truncateText } from '@/lib/utils-document';
-import { extractPDFPages } from '@/lib/pdf-processor';
+import { extractTextFromFile } from '@/lib/utils-document';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -24,28 +24,24 @@ export function DocumentUpload() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Check file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError('Arquivo muito grande. Máximo 10MB.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      if (file.type.includes('pdf')) {
-        const result = await extractPDFPages(file, 5);
-        
-        if (result.totalPages > 5) {
-          setError(`PDF contém ${result.totalPages} páginas. Apenas as 5 primeiras foram processadas.`);
-        }
-        
-        updateChatPages(currentChat.id, result.pages, file.name);
-      } else if (file.type.includes('text') || file.name.endsWith('.txt')) {
-        const text = await file.text();
-        const pageData = {
-          pageNumber: 1,
-          text: text.slice(0, 3000),
-          imageBase64: ''
-        };
-        updateChatPages(currentChat.id, [pageData], file.name);
+      const pages = await extractTextFromFile(file);
+      
+      if (pages.length > 8) {
+        setError(`Documento contém muitas páginas. Apenas as 8 primeiras foram processadas.`);
+        updateChatPages(currentChat.id, pages.slice(0, 8), file.name);
       } else {
-        throw new Error('Tipo de arquivo não suportado. Use PDF ou TXT.');
+        updateChatPages(currentChat.id, pages, file.name);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao ler arquivo');
@@ -87,7 +83,7 @@ export function DocumentUpload() {
     }
   };
 
-  const pageCount = currentChat.pages?.length || 0;
+  const pageCount = currentChat.documentPages?.length || 0;
 
   return (
     <Card className="shadow-sm border-border/60">
@@ -95,9 +91,9 @@ export function DocumentUpload() {
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
           <div>
-            <CardTitle className="text-base">Upload de Documento</CardTitle>
+            <CardTitle className="text-base">Enviar Documento</CardTitle>
             <CardDescription className="text-xs">
-              Envie seu relatório para análise
+              Carregue seu relatório para análise
             </CardDescription>
           </div>
         </div>
@@ -136,7 +132,7 @@ export function DocumentUpload() {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".txt,.pdf"
+            accept=".txt,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             onChange={handleFileSelect}
             disabled={loading}
             className="hidden"
@@ -148,7 +144,7 @@ export function DocumentUpload() {
             </div>
             <p className="font-semibold text-foreground">Clique para enviar ou arraste um arquivo</p>
             <p className="text-xs text-muted-foreground">
-              PDF ou TXT (Máx. 10MB)
+              PDF, DOCX ou TXT (Máx. 10MB)
             </p>
             {loading && <p className="text-sm text-primary font-medium animate-pulse">Processando...</p>}
           </div>
@@ -167,22 +163,12 @@ export function DocumentUpload() {
               </div>
             </div>
 
-            {/* Page Thumbnails */}
             <div className="space-y-2">
-              {currentChat.pages?.map((page, idx) => (
+              {currentChat.documentPages?.map((page, idx) => (
                 <div key={idx} className="p-2 bg-background rounded border border-border/50 text-xs">
                   <p className="font-medium text-foreground mb-1">Página {page.pageNumber}</p>
-                  {page.imageBase64 && (
-                    <div className="mb-2 rounded bg-muted overflow-hidden max-h-24">
-                      <img 
-                        src={`data:image/jpeg;base64,${page.imageBase64}`} 
-                        alt={`Página ${page.pageNumber}`}
-                        className="w-full h-auto object-cover"
-                      />
-                    </div>
-                  )}
-                  <p className="text-muted-foreground truncate">
-                    {truncateText(page.text, 100)}...
+                  <p className="text-muted-foreground line-clamp-2">
+                    {truncateText(page.text, 150)}
                   </p>
                 </div>
               ))}
@@ -202,7 +188,7 @@ export function DocumentUpload() {
 
         {pageCount === 0 && (
           <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-primary font-medium">
-            <p>Nenhum documento enviado. Envie seu relatório para fornecer contexto para a análise.</p>
+            <p>Nenhum documento enviado. Carregue seu relatório para fornecer contexto para a análise.</p>
           </div>
         )}
       </CardContent>

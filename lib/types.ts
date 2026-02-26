@@ -1,9 +1,9 @@
 // Academic Report Analyzer Types
 export interface ChatConfig {
-  academicLevel: 'high_school' | 'undergraduate' | 'graduate' | 'research';
-  norms: 'mla' | 'apa' | 'chicago' | 'harvard' | 'custom';
-  workType: 'essay' | 'research_paper' | 'thesis' | 'case_study' | 'literature_review' | 'report' | 'other';
-  theme: 'professional' | 'academic' | 'technical';
+  academicLevel: 'ensino_medio' | 'graduacao' | 'pos_graduacao';
+  norms: 'apa' | 'abnt' | 'vancouver' | 'outra';
+  workType: 'relatorio_escolar' | 'artigo_cientifico' | 'projeto_tecnologico' | 'tcc';
+  focusAnalysis: 'estrutura' | 'linguagem' | 'referencias' | 'todos';
 }
 
 export interface Message {
@@ -11,13 +11,11 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
-  documentContext?: string;
 }
 
-export interface PageData {
+export interface PagedDocument {
   pageNumber: number;
   text: string;
-  imageBase64: string;
 }
 
 export interface Chat {
@@ -25,47 +23,30 @@ export interface Chat {
   title: string;
   config: ChatConfig;
   messages: Message[];
-  pages?: PageData[];
+  documentPages?: PagedDocument[];
   documentFileName?: string;
   createdAt: number;
   updatedAt: number;
 }
 
-export interface AnalysisPage {
-  pageNumber: number;
-  visualProblems: string;
-  textualIssues: string;
-  suggestions: string;
-}
-
 export interface AnalysisResult {
   score: number;
-  structure: string;
-  clarity: string;
-  coherence: string;
-  academicNorms: string;
-  formalErrors: string;
-  suggestions: string;
-  pageAnalysis: AnalysisPage[];
-  sectionAnalysis: {
-    section: string;
-    feedback: string;
+  pageProblems: {
+    pageNumber: number;
+    problems: string;
   }[];
+  generalProblems: string;
+  referenceErrors: string;
+  suggestions: string;
+  qualityLevel: string;
 }
 
-export interface MultimodalAPIRequest {
-  pages: PageData[];
+export interface AnalysisRequest {
+  pages: PagedDocument[];
   config: ChatConfig;
-  documentContext?: string;
+  userContext?: string;
 }
 
-export interface APIRequest {
-  content: string;
-  config: ChatConfig;
-  documentContext?: string;
-}
-
-export interface APIResponse {
+export interface AnalysisResponse {
   analysis: AnalysisResult;
-  message: string;
 }

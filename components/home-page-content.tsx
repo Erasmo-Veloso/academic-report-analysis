@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useChat } from '@/lib/chat-context';
-import { Message, MultimodalAPIRequest } from '@/lib/types';
+import { Message, AnalysisRequest } from '@/lib/types';
 import { ChatInterface } from '@/components/chat-interface';
 import { ChatConfigPanel } from '@/components/chat-config-panel';
 import { DocumentUpload } from '@/components/document-upload';
@@ -47,12 +47,12 @@ export function HomePageContent() {
         userMessage.toLowerCase().includes('avalia') ||
         userMessage.toLowerCase().includes('analizar');
 
-      if (isAskingForAnalysis && currentChat.pages && currentChat.pages.length > 0) {
-        // Send to multimodal analysis API
-        const payload: MultimodalAPIRequest = {
-          pages: currentChat.pages,
+      if (isAskingForAnalysis && currentChat.documentPages && currentChat.documentPages.length > 0) {
+        // Send to text-only analysis API
+        const payload: AnalysisRequest = {
+          pages: currentChat.documentPages,
           config: currentChat.config,
-          documentContext: userMessage,
+          userContext: userMessage,
         };
 
         const response = await fetch('/api/analisar', {
@@ -80,16 +80,16 @@ export function HomePageContent() {
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: `Análise completa! Pontuação: ${data.analysis.score}/100 (${scoreLabel})\n\nVeja o painel de análise à direita para feedback detalhado.`,
+          content: `Análise concluída! Pontuação: ${data.analysis.score}/100 (${scoreLabel})\n\nVeja o painel à direita para feedback detalhado sobre estrutura, linguagem, referências e sugestões.`,
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
-      } else if (isAskingForAnalysis && (!currentChat.pages || currentChat.pages.length === 0)) {
+      } else if (isAskingForAnalysis && (!currentChat.documentPages || currentChat.documentPages.length === 0)) {
         // User asked for analysis but no document uploaded
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: 'Por favor, envie um documento primeiro antes de solicitar uma análise. Use a seção Upload de Documento para adicionar seu relatório.',
+          content: 'Por favor, envie um documento primeiro para análise. Use a seção "Enviar Documento" na direita.',
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
@@ -104,7 +104,7 @@ export function HomePageContent() {
             },
             body: JSON.stringify({
               message: userMessage,
-              documentContext: currentChat.pages?.[0]?.text || '',
+              documentContext: currentChat.documentPages?.[0]?.text || '',
               history: currentChat.messages.slice(-5),
             }),
           });

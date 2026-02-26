@@ -17,15 +17,29 @@ export function ChatConfigPanel() {
     updateChatConfig(currentChat.id, { [key]: value });
   };
 
+  const configLabels = {
+    ensino_medio: 'Ensino Médio',
+    graduacao: 'Graduação',
+    pos_graduacao: 'Pós-Graduação',
+    relatorio_escolar: 'Relatório Escolar',
+    artigo_cientifico: 'Artigo Científico',
+    projeto_tecnologico: 'Projeto Tecnológico',
+    tcc: 'TCC',
+    estrutura: 'Estrutura',
+    linguagem: 'Linguagem',
+    referencias: 'Referências',
+    todos: 'Todos os Aspectos',
+  };
+
   return (
     <Card className="shadow-sm border-border/60">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <Settings2 className="w-5 h-5 text-primary" aria-hidden="true" />
           <div>
-            <CardTitle className="text-base">Configuração de Análise</CardTitle>
+            <CardTitle className="text-base">Parâmetros da Análise</CardTitle>
             <CardDescription className="text-xs">
-              Personalize os parâmetros de análise
+              Configure os critérios de avaliação
             </CardDescription>
           </div>
         </div>
@@ -34,11 +48,11 @@ export function ChatConfigPanel() {
         <div className="space-y-4">
           {/* Academic Level */}
           <div className="space-y-2.5">
-            <Label htmlFor="academic-level" className="font-semibold text-sm text-foreground">
+            <Label className="font-semibold text-sm text-foreground">
               Nível Acadêmico
             </Label>
             <div className="space-y-1.5">
-              {(['high_school', 'undergraduate', 'graduate', 'research'] as const).map(level => (
+              {(['ensino_medio', 'graduacao', 'pos_graduacao'] as const).map(level => (
                 <label 
                   key={level} 
                   className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-muted transition-colors duration-150"
@@ -50,10 +64,10 @@ export function ChatConfigPanel() {
                     checked={currentChat.config.academicLevel === level}
                     onChange={(e) => handleConfigChange('academicLevel', e.target.value)}
                     className="w-4 h-4 accent-primary cursor-pointer"
-                    aria-label={`${level.replace('_', ' ')}`}
+                    aria-label={configLabels[level]}
                   />
-                  <span className="text-sm text-foreground capitalize font-medium">
-                    {level.replace('_', ' ')}
+                  <span className="text-sm text-foreground font-medium">
+                    {configLabels[level]}
                   </span>
                 </label>
               ))}
@@ -62,11 +76,11 @@ export function ChatConfigPanel() {
 
           {/* Citation Norms */}
           <div className="space-y-2.5 pt-2 border-t border-border/40">
-            <Label htmlFor="norms" className="font-semibold text-sm text-foreground">
-              Normas de Citação
+            <Label className="font-semibold text-sm text-foreground">
+              Norma Acadêmica
             </Label>
             <div className="space-y-1.5">
-              {(['mla', 'apa', 'chicago', 'harvard', 'custom'] as const).map(norm => (
+              {(['apa', 'abnt', 'vancouver', 'outra'] as const).map(norm => (
                 <label 
                   key={norm} 
                   className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-muted transition-colors duration-150"
@@ -90,11 +104,11 @@ export function ChatConfigPanel() {
 
           {/* Work Type */}
           <div className="space-y-2.5 pt-2 border-t border-border/40">
-            <Label htmlFor="work-type" className="font-semibold text-sm text-foreground">
+            <Label className="font-semibold text-sm text-foreground">
               Tipo de Trabalho
             </Label>
             <div className="space-y-1.5">
-              {(['essay', 'research_paper', 'thesis', 'case_study', 'literature_review', 'report', 'other'] as const).map(type => (
+              {(['relatorio_escolar', 'artigo_cientifico', 'projeto_tecnologico', 'tcc'] as const).map(type => (
                 <label 
                   key={type} 
                   className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-muted transition-colors duration-150"
@@ -106,38 +120,38 @@ export function ChatConfigPanel() {
                     checked={currentChat.config.workType === type}
                     onChange={(e) => handleConfigChange('workType', e.target.value)}
                     className="w-4 h-4 accent-primary cursor-pointer"
-                    aria-label={`${type.replace('_', ' ')}`}
+                    aria-label={configLabels[type]}
                   />
-                  <span className="text-sm text-foreground capitalize font-medium">
-                    {type.replace('_', ' ')}
+                  <span className="text-sm text-foreground font-medium">
+                    {configLabels[type]}
                   </span>
                 </label>
               ))}
             </div>
           </div>
 
-          {/* Theme */}
+          {/* Focus Analysis */}
           <div className="space-y-2.5 pt-2 border-t border-border/40">
-            <Label htmlFor="theme" className="font-semibold text-sm text-foreground">
-              Tema de Análise
+            <Label className="font-semibold text-sm text-foreground">
+              Foco da Análise
             </Label>
             <div className="space-y-1.5">
-              {(['professional', 'academic', 'technical'] as const).map(theme => (
+              {(['estrutura', 'linguagem', 'referencias', 'todos'] as const).map(focus => (
                 <label 
-                  key={theme} 
+                  key={focus} 
                   className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-muted transition-colors duration-150"
                 >
                   <input
                     type="radio"
-                    name="theme"
-                    value={theme}
-                    checked={currentChat.config.theme === theme}
-                    onChange={(e) => handleConfigChange('theme', e.target.value)}
+                    name="focus"
+                    value={focus}
+                    checked={currentChat.config.focusAnalysis === focus}
+                    onChange={(e) => handleConfigChange('focusAnalysis', e.target.value)}
                     className="w-4 h-4 accent-primary cursor-pointer"
-                    aria-label={theme}
+                    aria-label={configLabels[focus]}
                   />
-                  <span className="text-sm text-foreground capitalize font-medium">
-                    {theme}
+                  <span className="text-sm text-foreground font-medium">
+                    {configLabels[focus]}
                   </span>
                 </label>
               ))}
@@ -149,7 +163,7 @@ export function ChatConfigPanel() {
         <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20 text-sm text-foreground">
           <p className="font-medium text-primary mb-1">Configuração Atual:</p>
           <p className="text-xs leading-relaxed">
-            {currentChat.config.academicLevel} nível {currentChat.config.workType} usando formato <span className="font-semibold">{currentChat.config.norms.toUpperCase()}</span> com tema de análise {currentChat.config.theme}.
+            {configLabels[currentChat.config.academicLevel]} · {configLabels[currentChat.config.workType]} · Norma {currentChat.config.norms.toUpperCase()} · Foco: {configLabels[currentChat.config.focusAnalysis]}
           </p>
         </div>
       </CardContent>

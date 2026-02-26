@@ -35,7 +35,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
       {/* Score Card */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/0 border-primary/20">
         <CardHeader>
-          <CardTitle>Pontuação Geral</CardTitle>
+          <CardTitle>Pontuação Final</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-6">
@@ -51,7 +51,7 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
                 {scoreLabel}
               </p>
               <p className="text-muted-foreground text-xs mt-2">
-                Baseado em estrutura, clareza, coerência, normas acadêmicas e correção formal
+                {analysis.qualityLevel}
               </p>
             </div>
           </div>
@@ -59,50 +59,20 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
       </Card>
 
       {/* Per-Page Analysis */}
-      {analysis.pageAnalysis && analysis.pageAnalysis.length > 0 && (
+      {analysis.pageProblems && analysis.pageProblems.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Análise por Página</CardTitle>
-            <CardDescription>Problemas visuais e textuais identificados em cada página</CardDescription>
+            <CardTitle className="text-lg">Problemas por Página</CardTitle>
+            <CardDescription>Questões identificadas em cada página do documento</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {analysis.pageAnalysis.map((page, idx) => (
-                <div key={idx} className="border border-border/50 rounded-lg p-4 space-y-3">
-                  <h4 className="font-semibold text-sm text-primary">Página {page.pageNumber}</h4>
-                  
-                  {page.visualProblems && (
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                        Problemas Visuais
-                      </p>
-                      <p className="text-sm text-foreground leading-relaxed">
-                        {page.visualProblems}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {page.textualIssues && (
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                        Problemas de Texto
-                      </p>
-                      <p className="text-sm text-foreground leading-relaxed">
-                        {page.textualIssues}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {page.suggestions && (
-                    <div className="bg-primary/5 p-3 rounded border border-primary/20">
-                      <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">
-                        Sugestões
-                      </p>
-                      <p className="text-sm text-foreground leading-relaxed">
-                        {page.suggestions}
-                      </p>
-                    </div>
-                  )}
+              {analysis.pageProblems.map((page, idx) => (
+                <div key={idx} className="border border-border/50 rounded-lg p-4">
+                  <h4 className="font-semibold text-sm text-primary mb-2">Página {page.pageNumber}</h4>
+                  <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                    {page.problems}
+                  </p>
                 </div>
               ))}
             </div>
@@ -110,62 +80,49 @@ export function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
         </Card>
       )}
 
-      {/* Analysis Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[
-          { label: 'Estrutura', value: analysis.structure },
-          { label: 'Clareza', value: analysis.clarity },
-          { label: 'Coerência', value: analysis.coherence },
-          { label: 'Normas Acadêmicas', value: analysis.academicNorms },
-          { label: 'Erros Formais', value: analysis.formalErrors },
-        ].map(item => (
-          <Card key={item.label}>
-            <CardHeader>
-              <CardTitle className="text-base">{item.label}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                {item.value}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Suggestions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Sugestões de Melhoria</CardTitle>
-          <CardDescription>
-            Recomendações específicas e acionáveis
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-            {analysis.suggestions}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Section Analysis */}
-      {analysis.sectionAnalysis.length > 0 && (
+      {/* General Problems */}
+      {analysis.generalProblems && (
         <Card>
           <CardHeader>
-            <CardTitle>Análise por Seção</CardTitle>
+            <CardTitle className="text-lg">Problemas Gerais do Documento</CardTitle>
+            <CardDescription>Questões que afetam o documento como um todo</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {analysis.sectionAnalysis.map((section, idx) => (
-                <div key={idx} className="border-l-4 border-primary/50 pl-4 py-2">
-                  <h4 className="font-semibold text-sm mb-2 text-foreground capitalize">
-                    {section.section}
-                  </h4>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                    {section.feedback}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+              {analysis.generalProblems}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Reference Errors */}
+      {analysis.referenceErrors && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Erros em Referências e Citações</CardTitle>
+            <CardDescription>Problemas com conformidade às normas de citação</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+              {analysis.referenceErrors}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Suggestions */}
+      {analysis.suggestions && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="text-lg">Sugestões de Melhoria</CardTitle>
+            <CardDescription>
+              Recomendações específicas e acionáveis
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+              {analysis.suggestions}
+            </p>
           </CardContent>
         </Card>
       )}
