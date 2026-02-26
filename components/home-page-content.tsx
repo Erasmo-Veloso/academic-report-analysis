@@ -7,9 +7,8 @@ import { ChatInterface } from '@/components/chat-interface';
 import { ChatConfigPanel } from '@/components/chat-config-panel';
 import { DocumentUpload } from '@/components/document-upload';
 import { AnalysisDisplay } from '@/components/analysis-display';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, AlertCircle } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export function HomePageContent() {
   const { currentChat, addMessage, getCohereKey } = useChat();
@@ -150,13 +149,33 @@ export function HomePageContent() {
 
   if (!currentChat) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <Alert>
-          <AlertCircle className="w-4 h-4" />
-          <AlertDescription>
-            Crie uma nova análise para começar. Clique no botão "+ Nova Análise" na barra lateral.
-          </AlertDescription>
-        </Alert>
+      <div className="flex items-center justify-center h-full px-4">
+        <div className="max-w-md w-full space-y-6 text-center">
+          <div className="space-y-3">
+            <h2 className="text-4xl font-bold text-foreground text-balance">
+              Que relatórios vamos analisar hoje?
+            </h2>
+            <p className="text-base text-muted-foreground leading-relaxed">
+              Nosso analisador acadêmico examina seus documentos com inteligência artificial, 
+              fornecendo feedback detalhado sobre estrutura, clareza, referências e muito mais. 
+              Suportamos PDF, DOCX e TXT.
+            </p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+            <p className="text-sm font-medium text-foreground">
+              Comece clicando em <span className="text-primary font-semibold">"+ Nova Análise"</span> na barra lateral
+            </p>
+          </div>
+
+          <Button 
+            onClick={() => window.location.href = '/#new-analysis'}
+            size="lg"
+            className="w-full"
+          >
+            + Criar Nova Análise
+          </Button>
+        </div>
       </div>
     );
   }
