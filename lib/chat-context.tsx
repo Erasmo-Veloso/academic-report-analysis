@@ -18,8 +18,8 @@ interface ChatContextType {
   updateChatPages: (id: string, pages: PagedDocument[], fileName: string) => void;
   updateChatConfig: (id: string, config: Partial<ChatConfig>) => void;
   
-  getGeminiKey: () => string | null;
-  setGeminiKey: (key: string) => void;
+  getCohereKey: () => string | null;
+  setCohereKey: (key: string) => void;
   
   exportChatAsJson: (id: string) => void;
 }
@@ -146,15 +146,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const getGeminiKey = () => {
+  const getCohereKey = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('gemini_api_key');
+      return localStorage.getItem('cohere_api_key');
     }
     return null;
   };
 
-  const setGeminiKey = (key: string) => {
-    localStorage.setItem('gemini_api_key', key);
+  const setCohereKey = (key: string) => {
+    localStorage.setItem('cohere_api_key', key);
   };
 
   const exportChatAsJson = (id: string) => {
@@ -185,8 +185,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         updateChatDocument,
         updateChatPages,
         updateChatConfig,
-        getGeminiKey,
-        setGeminiKey,
+        getCohereKey,
+        setCohereKey,
         exportChatAsJson,
       }}
     >

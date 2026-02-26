@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AnalysisRequest, AnalysisResponse } from '@/lib/types';
 import { buildAnalysisPrompt } from '@/lib/prompt-builder';
 
+const COHERE_API_URL = 'https://api.cohere.com/v1/generate';
+
 export async function POST(request: NextRequest) {
   try {
-    const apiKey = request.headers.get('x-gemini-key');
+    const apiKey = request.headers.get('x-cohere-key');
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'Chave de API Gemini não fornecida' },
+        { error: 'Chave de API Cohere não fornecida' },
         { status: 400 }
       );
     }
@@ -32,12 +33,32 @@ export async function POST(request: NextRequest) {
     // Build prompt
     const prompt = buildAnalysisPrompt(body.pages, body.config, body.userContext);
 
-    // Send to Gemini
-    const client = new GoogleGenerativeAI(apiKey);
-    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Send to Cohere API
+    const cohereResponse = await fetch(COHERE_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'command-r-plus',
+        prompt: prompt,
+        max_tokens: 2000,
+        temperature: 0.8,
+      }),
+    });
 
-    const response = await model.generateContent(prompt);
-    const analysisText = response.response.text();
+    if (!cohereResponse.ok) {
+      const errorData = await cohereResponse.json();
+      console.error('[v0] Erro Cohere:', errorData);
+      return NextResponse.json(
+        { details: errorData.message || 'Erro ao processar com Cohere' },
+        { status: cohereResponse.status }
+      );
+    }
+
+    const cohereData = await cohereResponse.json();
+    const analysisText = cohereData.generations[0].text;
 
     // Parse the response into structured format
     const analysis = parseAnalysisResponse(analysisText);
@@ -49,13 +70,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('[v0] Erro na análise:', error);
-
-    if (error instanceof Error && error.message.includes('429')) {
-      return NextResponse.json(
-        { details: 'Limite de requisições atingido. Aguarde alguns momentos e tente novamente.' },
-        { status: 429 }
-      );
-    }
 
     return NextResponse.json(
       { details: error instanceof Error ? error.message : 'Erro ao processar análise' },

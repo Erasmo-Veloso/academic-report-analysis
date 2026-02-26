@@ -8,20 +8,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function SettingsPage() {
-  const { getGeminiKey, setGeminiKey } = useChat();
+  const { getCohereKey, setCohereKey } = useChat();
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const key = getGeminiKey();
+    const key = getCohereKey();
     if (key) {
       setApiKey(key);
     }
-  }, [getGeminiKey]);
+  }, [getCohereKey]);
 
   const handleSave = () => {
-    setGeminiKey(apiKey);
+    setCohereKey(apiKey);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -37,16 +37,16 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Chave de API do Google Gemini</CardTitle>
-              <CardDescription>
-                Sua chave de API é armazenada localmente no seu navegador e nunca é enviada aos nossos servidores.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="api-key">Chave de API</Label>
+        <Card>
+          <CardHeader>
+            <CardTitle>Chave de API Cohere</CardTitle>
+            <CardDescription>
+              Sua chave de API é armazenada localmente no seu navegador e nunca é enviada aos nossos servidores.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="api-key">Chave de API</Label>
                 <div className="flex gap-2">
                   <Input
                     id="api-key"
@@ -64,22 +64,22 @@ export default function SettingsPage() {
                     {showKey ? 'Ocultar' : 'Mostrar'}
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Obtenha sua chave de API em{' '}
-                  <a
-                    href="https://makersuite.google.com/app/apikey"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-foreground"
-                  >
-                    Google AI Studio
-                  </a>
-                </p>
+              <p className="text-xs text-muted-foreground">
+                Obtenha sua chave de API em{' '}
+                <a
+                  href="https://dashboard.cohere.ai/api-keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-foreground"
+                >
+                  Cohere Dashboard
+                </a>
+              </p>
               </div>
 
-              <Button onClick={handleSave} className="w-full">
-                {saved ? '✓ Salvo' : 'Salvar Chave de API'}
-              </Button>
+            <Button onClick={handleSave} className="w-full">
+              {saved ? '✓ Salvo' : 'Salvar Chave de API Cohere'}
+            </Button>
             </CardContent>
           </Card>
 
@@ -105,13 +105,13 @@ export default function SettingsPage() {
                   Não armazenamos essas requisições em nossos servidores.
                 </p>
               </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Segurança da Chave de API</p>
-                <p className="text-muted-foreground">
-                  Sua chave de API Gemini é armazenada apenas no localStorage do seu navegador e nunca é registrada,
-                  compartilhada ou enviada para qualquer lugar exceto diretamente para a API do Google.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <p className="font-semibold">Segurança da Chave de API</p>
+              <p className="text-muted-foreground">
+                Sua chave de API Cohere é armazenada apenas no localStorage do seu navegador e nunca é registrada,
+                compartilhada ou enviada para qualquer lugar exceto diretamente para a API do Cohere.
+              </p>
+            </div>
             </CardContent>
           </Card>
 
@@ -119,17 +119,17 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Sobre</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p className="text-muted-foreground">
-                Analisador de Relatórios Acadêmicos v1.0
-              </p>
-              <p className="text-muted-foreground">
-                Desenvolvido com Google Gemini
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+          <CardContent className="space-y-2 text-sm">
+            <p className="text-muted-foreground">
+              Analisador de Relatórios Acadêmicos v1.0
+            </p>
+            <p className="text-muted-foreground">
+              Desenvolvido com Cohere AI
+            </p>
+          </CardContent>
+        </Card>
       </div>
+    </div>
     </main>
   );
 }

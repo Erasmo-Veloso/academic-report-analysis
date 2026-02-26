@@ -121,7 +121,7 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
           <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
             <AlertDescription className="text-destructive">
               <strong className="block mb-1">Erro:</strong> {apiError}
-              <p className="text-xs mt-2 opacity-80">Verifique sua chave de API Gemini em Configurações</p>
+              <p className="text-xs mt-2 opacity-80">Verifique sua chave de API Cohere em Configurações</p>
             </AlertDescription>
           </Alert>
         </div>

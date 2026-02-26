@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, AlertCircle } from 'lucide-react';
 
 export function HomePageContent() {
-  const { currentChat, addMessage, getGeminiKey } = useChat();
+  const { currentChat, addMessage, getCohereKey } = useChat();
   const [isLoading, setIsLoading] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [lastAnalysis, setLastAnalysis] = useState<any>(null);
@@ -33,9 +33,9 @@ export function HomePageContent() {
     setIsLoading(true);
 
     try {
-      const apiKey = getGeminiKey();
+      const apiKey = getCohereKey();
       if (!apiKey) {
-        throw new Error('Chave de API Gemini não configurada. Configure em Configurações.');
+        throw new Error('Chave de API Cohere não configurada. Configure em Configurações.');
       }
 
       // Check if user is asking for analysis
@@ -59,7 +59,7 @@ export function HomePageContent() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-gemini-key': apiKey,
+            'x-cohere-key': apiKey,
           },
           body: JSON.stringify(payload),
         });
@@ -94,13 +94,13 @@ export function HomePageContent() {
         };
         addMessage(assistantMsg);
       } else {
-        // Regular conversation with Gemini
+        // Regular conversation with Cohere
         try {
           const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'x-gemini-key': apiKey,
+              'x-cohere-key': apiKey,
             },
             body: JSON.stringify({
               message: userMessage,
