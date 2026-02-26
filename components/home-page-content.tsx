@@ -8,12 +8,15 @@ import { ChatConfigPanel } from '@/components/chat-config-panel';
 import { DocumentUpload } from '@/components/document-upload';
 import { AnalysisDisplay } from '@/components/analysis-display';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
 export function HomePageContent() {
   const { currentChat, addMessage, getGeminiKey } = useChat();
   const [isLoading, setIsLoading] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [lastAnalysis, setLastAnalysis] = useState<any>(null);
+  const [showConfigPanel, setShowConfigPanel] = useState(true);
 
   const handleSendMessage = async (userMessage: string) => {
     if (!currentChat) return;
@@ -133,27 +136,54 @@ export function HomePageContent() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full overflow-hidden">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full overflow-hidden p-4">
       {/* Main Chat Area */}
-      <div className="lg:col-span-2 flex flex-col overflow-hidden rounded-lg border border-border bg-background">
+      <div className="lg:col-span-2 flex flex-col overflow-hidden rounded-lg border border-border bg-background shadow-sm">
         <ChatInterface onSendMessage={handleSendMessage} isLoading={isLoading} />
       </div>
 
-      {/* Right Sidebar */}
-      <div className="overflow-y-auto space-y-6 pr-2">
-        {/* Configuration */}
-        <ChatConfigPanel />
+      {/* Right Sidebar with Toggle */}
+      <div className="overflow-hidden flex flex-col">
+        {/* Toggle Button for Config Panel */}
+        <Button
+          onClick={() => setShowConfigPanel(!showConfigPanel)}
+          variant="outline"
+          size="sm"
+          className="mb-3 w-full justify-between transition-all duration-200"
+          aria-expanded={showConfigPanel}
+          aria-controls="config-panel"
+        >
+          <span className="text-sm font-medium">Configuration</span>
+          <ChevronRight 
+            className={`w-4 h-4 transition-transform duration-300 ${
+              showConfigPanel ? 'rotate-90' : ''
+            }`}
+            aria-hidden="true"
+          />
+        </Button>
 
-        {/* Document Upload */}
-        <DocumentUpload />
+        {/* Collapsible Config and Upload Area */}
+        <div 
+          id="config-panel"
+          className={`
+            flex-1 overflow-y-auto space-y-4 pr-2 transition-all duration-300
+            ${showConfigPanel ? 'opacity-100 visible' : 'opacity-0 invisible h-0'}
+          `}
+        >
+          {/* Configuration */}
+          <ChatConfigPanel />
 
-        {/* Analysis Display */}
-        {showAnalysis && lastAnalysis && (
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-4">Analysis Results</h2>
-            <AnalysisDisplay analysis={lastAnalysis} />
-          </div>
-        )}
+          {/* Document Upload */}
+          <DocumentUpload />
+
+          {/* Analysis Display */}
+          {showAnalysis && lastAnalysis && (
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold mb-3 text-foreground">Analysis Results</h2>
+              <AnalysisDisplay analysis={lastAnalysis} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
