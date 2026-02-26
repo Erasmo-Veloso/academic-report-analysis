@@ -8,7 +8,7 @@ import { formatTimestamp, truncateText } from '@/lib/utils-document';
 import { Download, Trash2, Plus, Settings } from 'lucide-react';
 
 export function ChatSidebar() {
-  const { chats, currentChatId, createChat, deleteChat, exportChatAsJson } = useChat();
+  const { chats, currentChatId, createChat, deleteChat, setCurrentChat, exportChatAsJson } = useChat();
   const router = useRouter();
 
   const handleNewChat = () => {
@@ -17,6 +17,10 @@ export function ChatSidebar() {
       router.push(`/analise/${newChat.id}`);
     }, 0);
   };
+
+  const handleClickChat = (chatId: string) => {
+    setCurrentChat(chatId)
+  }
 
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -47,9 +51,9 @@ export function ChatSidebar() {
 
       {/* New Chat Button */}
       <div className="p-3 border-b border-sidebar-border bg-sidebar/50">
-        <Button 
-          onClick={handleNewChat} 
-          className="w-full bg-sidebar-primary hover:bg-sidebar-primary/90 text-sidebar-primary-foreground shadow-md transition-all duration-200" 
+        <Button
+          onClick={handleNewChat}
+          className="w-full bg-sidebar-primary hover:bg-sidebar-primary/90 text-sidebar-primary-foreground shadow-md transition-all duration-200"
           size="sm"
         >
           <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -73,6 +77,7 @@ export function ChatSidebar() {
                 <Link
                   key={chat.id}
                   href={`/analise/${chat.id}`}
+                  onClick={() => handleClickChat(chat.id)}
                   className={`
                     group relative p-3 rounded-lg transition-all duration-200 block
                     ${isCurrent
@@ -98,7 +103,7 @@ export function ChatSidebar() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div 
+                  <div
                     className="flex gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -143,8 +148,8 @@ export function ChatSidebar() {
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border bg-sidebar/50 space-y-2">
         <Link href="/settings" className="block">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="w-full text-sm justify-start text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent/50 transition-colors duration-200"
           >
             <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
