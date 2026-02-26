@@ -32,7 +32,7 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
   if (!currentChat) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">Select or create a chat to begin</p>
+        <p className="text-muted-foreground">Selecione ou crie uma análise para começar</p>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
       setInput('');
       await onSendMessage(userMessage);
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : 'Failed to send message');
+      setApiError(error instanceof Error ? error.message : 'Falha ao enviar mensagem');
     }
   };
 
@@ -57,18 +57,18 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
       <div className="px-4 py-3 border-b border-border/50 bg-gradient-to-r from-background to-muted/30">
         <h2 className="text-sm font-semibold text-foreground">{currentChat.title}</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
-          {currentChat.messages.length} message{currentChat.messages.length !== 1 ? 's' : ''}
+          {currentChat.messages.length} mensagem{currentChat.messages.length !== 1 ? 'ns' : ''}
         </p>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" role="region" aria-label="Chat messages" aria-live="polite" aria-atomic="false">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" role="region" aria-label="Mensagens de análise" aria-live="polite" aria-atomic="false">
         {currentChat.messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground text-center">
             <div>
               <div className="text-5xl mb-3 opacity-20">💬</div>
-              <p className="font-medium mb-1">No messages yet</p>
-              <p className="text-sm">Start by asking for an analysis of your report.</p>
+              <p className="font-medium mb-1">Nenhuma mensagem ainda</p>
+              <p className="text-sm">Comece solicitando uma análise do seu relatório.</p>
             </div>
           </div>
         ) : (
@@ -107,7 +107,7 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
                   <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                   <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
-                <span className="text-xs text-muted-foreground ml-2">Analyzing...</span>
+                <span className="text-xs text-muted-foreground ml-2">Analisando...</span>
               </div>
             </div>
           </div>

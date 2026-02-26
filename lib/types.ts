@@ -14,15 +14,28 @@ export interface Message {
   documentContext?: string;
 }
 
+export interface PageData {
+  pageNumber: number;
+  text: string;
+  imageBase64: string;
+}
+
 export interface Chat {
   id: string;
   title: string;
   config: ChatConfig;
   messages: Message[];
-  documentContent?: string;
+  pages?: PageData[];
   documentFileName?: string;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface AnalysisPage {
+  pageNumber: number;
+  visualProblems: string;
+  textualIssues: string;
+  suggestions: string;
 }
 
 export interface AnalysisResult {
@@ -33,10 +46,17 @@ export interface AnalysisResult {
   academicNorms: string;
   formalErrors: string;
   suggestions: string;
+  pageAnalysis: AnalysisPage[];
   sectionAnalysis: {
     section: string;
     feedback: string;
   }[];
+}
+
+export interface MultimodalAPIRequest {
+  pages: PageData[];
+  config: ChatConfig;
+  documentContext?: string;
 }
 
 export interface APIRequest {

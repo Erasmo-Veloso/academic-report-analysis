@@ -2,14 +2,15 @@
 
 import { useState, useRef } from 'react';
 import { useChat } from '@/lib/chat-context';
-import { extractTextFromFile, truncateText } from '@/lib/utils-document';
+import { truncateText } from '@/lib/utils-document';
+import { extractPDFPages } from '@/lib/pdf-processor';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Upload, X, FileText } from 'lucide-react';
+import { Upload, X, FileText, AlertTriangle } from 'lucide-react';
 
 export function DocumentUpload() {
-  const { currentChat, updateChatDocument } = useChat();
+  const { currentChat, updateChatPages } = useChat();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -27,10 +28,27 @@ export function DocumentUpload() {
     setError(null);
 
     try {
-      const text = await extractTextFromFile(file);
-      updateChatDocument(currentChat.id, text, file.name);
+      if (file.type.includes('pdf')) {
+        const result = await extractPDFPages(file, 5);
+        
+        if (result.totalPages > 5) {
+          setError(`PDF contém ${result.totalPages} páginas. Apenas as 5 primeiras foram processadas.`);
+        }
+        
+        updateChatPages(currentChat.id, result.pages, file.name);
+      } else if (file.type.includes('text') || file.name.endsWith('.txt')) {
+        const text = await file.text();
+        const pageData = {
+          pageNumber: 1,
+          text: text.slice(0, 3000),
+          imageBase64: ''
+        };
+        updateChatPages(currentChat.id, [pageData], file.name);
+      } else {
+        throw new Error('Tipo de arquivo não suportado. Use PDF ou TXT.');
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to read file');
+      setError(err instanceof Error ? err.message : 'Falha ao ler arquivo');
     } finally {
       setLoading(false);
       if (fileInputRef.current) {
@@ -40,8 +58,8 @@ export function DocumentUpload() {
   };
 
   const handleClearDocument = () => {
-    if (currentChat.documentFileName && confirm('Clear document?')) {
-      updateChatDocument(currentChat.id, '', '');
+    if (currentChat.documentFileName && confirm('Limpar documento?')) {
+      updateChatPages(currentChat.id, [], '');
     }
   };
 
@@ -69,15 +87,17 @@ export function DocumentUpload() {
     }
   };
 
+  const pageCount = currentChat.pages?.length || 0;
+
   return (
     <Card className="shadow-sm border-border/60">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
           <div>
-            <CardTitle className="text-base">Document Upload</CardTitle>
+            <CardTitle className="text-base">Upload de Documento</CardTitle>
             <CardDescription className="text-xs">
-              Upload your report for analysis
+              Envie seu relatório para análise
             </CardDescription>
           </div>
         </div>
@@ -85,6 +105,7 @@ export function DocumentUpload() {
       <CardContent className="space-y-4">
         {error && (
           <Alert variant="destructive">
+            <AlertTriangle className="w-4 h-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -110,12 +131,12 @@ export function DocumentUpload() {
               fileInputRef.current?.click();
             }
           }}
-          aria-label="Upload document"
+          aria-label="Enviar documento"
         >
           <input
             ref={fileInputRef}
             type="file"
-            accept=".txt,.pdf,.docx"
+            accept=".txt,.pdf"
             onChange={handleFileSelect}
             disabled={loading}
             className="hidden"
@@ -125,15 +146,15 @@ export function DocumentUpload() {
             <div className="flex justify-center">
               <Upload className={`w-8 h-8 ${isDragActive ? 'text-primary' : 'text-muted-foreground'} transition-colors`} aria-hidden="true" />
             </div>
-            <p className="font-semibold text-foreground">Click to upload or drag and drop</p>
+            <p className="font-semibold text-foreground">Clique para enviar ou arraste um arquivo</p>
             <p className="text-xs text-muted-foreground">
-              TXT, PDF, or DOCX (Max 10MB)
+              PDF ou TXT (Máx. 10MB)
             </p>
-            {loading && <p className="text-sm text-primary font-medium animate-pulse">Processing...</p>}
+            {loading && <p className="text-sm text-primary font-medium animate-pulse">Processando...</p>}
           </div>
         </div>
 
-        {currentChat.documentFileName && (
+        {pageCount > 0 && (
           <div className="space-y-3 p-3 bg-muted/50 rounded-lg border border-border/40">
             <div className="flex items-start justify-between gap-2">
               <div className="space-y-1 flex-1 min-w-0">
@@ -141,15 +162,32 @@ export function DocumentUpload() {
                   {currentChat.documentFileName}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {currentChat.documentContent?.length || 0} characters
+                  {pageCount} página{pageCount !== 1 ? 's' : ''} processada{pageCount !== 1 ? 's' : ''}
                 </p>
               </div>
             </div>
-            <div className="bg-background p-3 rounded border border-border/50 max-h-32 overflow-y-auto text-sm scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed text-xs">
-                {truncateText(currentChat.documentContent || '', 300)}
-              </p>
+
+            {/* Page Thumbnails */}
+            <div className="space-y-2">
+              {currentChat.pages?.map((page, idx) => (
+                <div key={idx} className="p-2 bg-background rounded border border-border/50 text-xs">
+                  <p className="font-medium text-foreground mb-1">Página {page.pageNumber}</p>
+                  {page.imageBase64 && (
+                    <div className="mb-2 rounded bg-muted overflow-hidden max-h-24">
+                      <img 
+                        src={`data:image/jpeg;base64,${page.imageBase64}`} 
+                        alt={`Página ${page.pageNumber}`}
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                  )}
+                  <p className="text-muted-foreground truncate">
+                    {truncateText(page.text, 100)}...
+                  </p>
+                </div>
+              ))}
             </div>
+
             <Button
               variant="outline"
               size="sm"
@@ -157,14 +195,14 @@ export function DocumentUpload() {
               className="w-full text-destructive hover:bg-destructive/10"
             >
               <X className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
-              Clear Document
+              Limpar Documento
             </Button>
           </div>
         )}
 
-        {!currentChat.documentFileName && (
+        {pageCount === 0 && (
           <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-primary font-medium">
-            <p>No document uploaded. Upload your report to provide context for analysis.</p>
+            <p>Nenhum documento enviado. Envie seu relatório para fornecer contexto para a análise.</p>
           </div>
         )}
       </CardContent>

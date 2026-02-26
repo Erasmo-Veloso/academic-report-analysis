@@ -22,7 +22,7 @@ export function ChatSidebar() {
 
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this chat?')) {
+    if (confirm('Tem certeza que deseja deletar esta análise?')) {
       deleteChat(id);
     }
   };
@@ -40,9 +40,9 @@ export function ChatSidebar() {
       <div className="p-4 border-b border-sidebar-border bg-gradient-to-r from-sidebar to-sidebar/95">
         <Link href="/" className="block group">
           <h1 className="text-lg font-bold text-sidebar-foreground group-hover:text-sidebar-primary transition-colors duration-200">
-            Report Analyzer
+            Analisador de Relatórios
           </h1>
-          <p className="text-xs text-sidebar-foreground/60 mt-1">Academic Writing Assistant</p>
+          <p className="text-xs text-sidebar-foreground/60 mt-1">Assistente de Escrita Acadêmica</p>
         </Link>
       </div>
 
@@ -54,7 +54,7 @@ export function ChatSidebar() {
           size="sm"
         >
           <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
-          New Analysis
+          Nova Análise
         </Button>
       </div>
 
@@ -63,8 +63,8 @@ export function ChatSidebar() {
         {chats.length === 0 ? (
           <div className="p-6 text-center text-sidebar-foreground/60 text-sm flex flex-col items-center justify-center h-full gap-2">
             <div className="opacity-50">📄</div>
-            <p>No analyses yet</p>
-            <p className="text-xs">Create a new one to get started</p>
+            <p>Nenhuma análise ainda</p>
+            <p className="text-xs">Crie uma nova para começar</p>
           </div>
         ) : (
           <div className="space-y-1 p-2">
@@ -90,7 +90,7 @@ export function ChatSidebar() {
                     }
                   }}
                   aria-current={isCurrent}
-                  aria-label={`Chat: ${chat.title}`}
+                  aria-label={`Análise: ${chat.title}`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -120,8 +120,8 @@ export function ChatSidebar() {
                           : 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80'
                         }
                       `}
-                      title="Export chat"
-                      aria-label={`Export ${chat.title}`}
+                      title="Exportar análise"
+                      aria-label={`Exportar ${chat.title}`}
                     >
                       <Download className="w-3.5 h-3.5 mx-auto" aria-hidden="true" />
                       <span className="sr-only">Export</span>
@@ -135,8 +135,8 @@ export function ChatSidebar() {
                           : 'bg-destructive text-destructive-foreground hover:bg-destructive/80'
                         }
                       `}
-                      title="Delete chat"
-                      aria-label={`Delete ${chat.title}`}
+                      title="Deletar análise"
+                      aria-label={`Deletar ${chat.title}`}
                     >
                       <Trash2 className="w-3.5 h-3.5 mx-auto" aria-hidden="true" />
                       <span className="sr-only">Delete</span>
@@ -157,7 +157,7 @@ export function ChatSidebar() {
             className="w-full text-sm justify-start text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent/50 transition-colors duration-200"
           >
             <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
-            Settings
+            Configurações
           </Button>
         </Link>
       </div>

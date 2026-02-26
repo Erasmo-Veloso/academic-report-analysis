@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useChat } from '@/lib/chat-context';
-import { Message, APIRequest } from '@/lib/types';
+import { Message, MultimodalAPIRequest } from '@/lib/types';
 import { ChatInterface } from '@/components/chat-interface';
 import { ChatConfigPanel } from '@/components/chat-config-panel';
 import { DocumentUpload } from '@/components/document-upload';
 import { AnalysisDisplay } from '@/components/analysis-display';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, AlertCircle } from 'lucide-react';
 
 export function HomePageContent() {
   const { currentChat, addMessage, getGeminiKey } = useChat();
@@ -35,26 +35,27 @@ export function HomePageContent() {
     try {
       const apiKey = getGeminiKey();
       if (!apiKey) {
-        throw new Error('Gemini API key not configured. Please set it in Settings.');
+        throw new Error('Chave de API Gemini não configurada. Configure em Configurações.');
       }
 
       // Check if user is asking for analysis
       const isAskingForAnalysis =
-        userMessage.toLowerCase().includes('analyze') ||
-        userMessage.toLowerCase().includes('analysis') ||
-        userMessage.toLowerCase().includes('review') ||
+        userMessage.toLowerCase().includes('analisa') ||
+        userMessage.toLowerCase().includes('análise') ||
+        userMessage.toLowerCase().includes('revisão') ||
         userMessage.toLowerCase().includes('feedback') ||
-        userMessage.toLowerCase().includes('evaluate');
+        userMessage.toLowerCase().includes('avalia') ||
+        userMessage.toLowerCase().includes('analizar');
 
-      if (isAskingForAnalysis && currentChat.documentContent) {
-        // Send to analysis API
-        const payload: APIRequest = {
-          content: currentChat.documentContent,
+      if (isAskingForAnalysis && currentChat.pages && currentChat.pages.length > 0) {
+        // Send to multimodal analysis API
+        const payload: MultimodalAPIRequest = {
+          pages: currentChat.pages,
           config: currentChat.config,
           documentContext: userMessage,
         };
 
-        const response = await fetch('/api/analyze', {
+        const response = await fetch('/api/analisar', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ export function HomePageContent() {
 
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.details || error.error || 'Analysis failed');
+          throw new Error(error.details || error.error || 'Falha na análise');
         }
 
         const data = await response.json();
@@ -75,45 +76,39 @@ export function HomePageContent() {
         setShowAnalysis(true);
 
         // Add assistant response
+        const scoreLabel = data.analysis.score >= 80 ? 'Excelente' : data.analysis.score >= 60 ? 'Bom' : 'Precisa Melhorar';
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: `Analysis complete! Score: ${data.analysis.score}/100 (${data.analysis.score >= 80 ? 'Excellent' : data.analysis.score >= 60 ? 'Good' : 'Needs Improvement'})\n\nSee the analysis panel on the right for detailed feedback.`,
+          content: `Análise completa! Pontuação: ${data.analysis.score}/100 (${scoreLabel})\n\nVeja o painel de análise à direita para feedback detalhado.`,
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
-      } else if (isAskingForAnalysis && !currentChat.documentContent) {
+      } else if (isAskingForAnalysis && (!currentChat.pages || currentChat.pages.length === 0)) {
         // User asked for analysis but no document uploaded
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: 'Please upload a document first before requesting an analysis. Use the Document Upload section to add your report.',
+          content: 'Por favor, envie um documento primeiro antes de solicitar uma análise. Use a seção Upload de Documento para adicionar seu relatório.',
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
       } else {
-        // Regular conversation - use Gemini for responses
-        const payload = {
-          message: userMessage,
-          context: currentChat.documentContent ? `Reference: ${currentChat.documentContent.substring(0, 200)}...` : '',
-          config: currentChat.config,
-        };
-
-        // For now, just acknowledge the message
+        // Regular conversation
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: 'I can help with analysis and feedback on your academic work. Try uploading a document and asking for specific feedback on structure, clarity, citations, or other aspects.',
+          content: 'Posso ajudar com análise e feedback sobre seu trabalho acadêmico. Tente enviar um documento e solicitar feedback específico sobre estrutura, clareza, citações ou outros aspectos.',
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('[v0] Erro:', error);
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
+        content: `Erro: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         timestamp: Date.now(),
       };
       addMessage(errorMsg);
@@ -127,8 +122,9 @@ export function HomePageContent() {
     return (
       <div className="flex items-center justify-center h-full">
         <Alert>
+          <AlertCircle className="w-4 h-4" />
           <AlertDescription>
-            Create a new analysis to get started. Click the "+ New Analysis" button in the sidebar.
+            Crie uma nova análise para começar. Clique no botão "+ Nova Análise" na barra lateral.
           </AlertDescription>
         </Alert>
       </div>
@@ -153,7 +149,7 @@ export function HomePageContent() {
           aria-expanded={showConfigPanel}
           aria-controls="config-panel"
         >
-          <span className="text-sm font-medium">Configuration</span>
+          <span className="text-sm font-medium">Configuração</span>
           <ChevronRight 
             className={`w-4 h-4 transition-transform duration-300 ${
               showConfigPanel ? 'rotate-90' : ''
@@ -179,7 +175,7 @@ export function HomePageContent() {
           {/* Analysis Display */}
           {showAnalysis && lastAnalysis && (
             <div className="mt-4">
-              <h2 className="text-lg font-semibold mb-3 text-foreground">Analysis Results</h2>
+              <h2 className="text-lg font-semibold mb-3 text-foreground">Resultados da Análise</h2>
               <AnalysisDisplay analysis={lastAnalysis} />
             </div>
           )}

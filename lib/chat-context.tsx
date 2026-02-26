@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Chat, ChatConfig, Message } from '@/lib/types';
+import { Chat, ChatConfig, Message, PageData } from '@/lib/types';
 
 interface ChatContextType {
   chats: Chat[];
@@ -15,6 +15,7 @@ interface ChatContextType {
   
   addMessage: (message: Message) => void;
   updateChatDocument: (id: string, content: string, fileName: string) => void;
+  updateChatPages: (id: string, pages: PageData[], fileName: string) => void;
   updateChatConfig: (id: string, config: Partial<ChatConfig>) => void;
   
   getGeminiKey: () => string | null;
@@ -40,7 +41,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           setCurrentChatId(parsed[0].id);
         }
       } catch (e) {
-        console.error('Failed to load chats:', e);
+        console.error('[v0] Falha ao carregar análises:', e);
       }
     }
   }, []);
@@ -55,9 +56,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const createChat = (config: ChatConfig) => {
     const newChat: Chat = {
       id: Date.now().toString(),
-      title: `Analysis - ${new Date().toLocaleDateString()}`,
+      title: `Análise - ${new Date().toLocaleDateString('pt-BR')}`,
       config,
       messages: [],
+      pages: [],
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -107,7 +109,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         c.id === id
           ? {
               ...c,
-              documentContent: content,
+              documentFileName: fileName,
+              updatedAt: Date.now(),
+            }
+          : c
+      )
+    );
+  };
+
+  const updateChatPages = (id: string, pages: PageData[], fileName: string) => {
+    setChats(prev =>
+      prev.map(c =>
+        c.id === id
+          ? {
+              ...c,
+              pages,
               documentFileName: fileName,
               updatedAt: Date.now(),
             }
@@ -150,7 +166,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `chat-${chat.id}.json`;
+    link.download = `analise-${chat.id}.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -167,6 +183,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setCurrentChat,
         addMessage,
         updateChatDocument,
+        updateChatPages,
         updateChatConfig,
         getGeminiKey,
         setGeminiKey,
@@ -181,7 +198,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 export function useChat() {
   const context = useContext(ChatContext);
   if (!context) {
-    throw new Error('useChat must be used within ChatProvider');
+    throw new Error('useChat deve ser usado dentro de ChatProvider');
   }
   return context;
 }

@@ -23,9 +23,9 @@ export function ChatConfigPanel() {
         <div className="flex items-center gap-2">
           <Settings2 className="w-5 h-5 text-primary" aria-hidden="true" />
           <div>
-            <CardTitle className="text-base">Analysis Configuration</CardTitle>
+            <CardTitle className="text-base">Configuração de Análise</CardTitle>
             <CardDescription className="text-xs">
-              Customize your analysis parameters
+              Personalize os parâmetros de análise
             </CardDescription>
           </div>
         </div>
@@ -35,7 +35,7 @@ export function ChatConfigPanel() {
           {/* Academic Level */}
           <div className="space-y-2.5">
             <Label htmlFor="academic-level" className="font-semibold text-sm text-foreground">
-              Academic Level
+              Nível Acadêmico
             </Label>
             <div className="space-y-1.5">
               {(['high_school', 'undergraduate', 'graduate', 'research'] as const).map(level => (
@@ -63,7 +63,7 @@ export function ChatConfigPanel() {
           {/* Citation Norms */}
           <div className="space-y-2.5 pt-2 border-t border-border/40">
             <Label htmlFor="norms" className="font-semibold text-sm text-foreground">
-              Citation Norms
+              Normas de Citação
             </Label>
             <div className="space-y-1.5">
               {(['mla', 'apa', 'chicago', 'harvard', 'custom'] as const).map(norm => (
@@ -91,7 +91,7 @@ export function ChatConfigPanel() {
           {/* Work Type */}
           <div className="space-y-2.5 pt-2 border-t border-border/40">
             <Label htmlFor="work-type" className="font-semibold text-sm text-foreground">
-              Work Type
+              Tipo de Trabalho
             </Label>
             <div className="space-y-1.5">
               {(['essay', 'research_paper', 'thesis', 'case_study', 'literature_review', 'report', 'other'] as const).map(type => (
@@ -119,7 +119,7 @@ export function ChatConfigPanel() {
           {/* Theme */}
           <div className="space-y-2.5 pt-2 border-t border-border/40">
             <Label htmlFor="theme" className="font-semibold text-sm text-foreground">
-              Analysis Theme
+              Tema de Análise
             </Label>
             <div className="space-y-1.5">
               {(['professional', 'academic', 'technical'] as const).map(theme => (
@@ -147,9 +147,9 @@ export function ChatConfigPanel() {
 
         {/* Current Configuration Summary */}
         <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20 text-sm text-foreground">
-          <p className="font-medium text-primary mb-1">Current Configuration:</p>
+          <p className="font-medium text-primary mb-1">Configuração Atual:</p>
           <p className="text-xs leading-relaxed">
-            {currentChat.config.academicLevel} level {currentChat.config.workType} using <span className="font-semibold">{currentChat.config.norms.toUpperCase()}</span> format with {currentChat.config.theme} analysis theme.
+            {currentChat.config.academicLevel} nível {currentChat.config.workType} usando formato <span className="font-semibold">{currentChat.config.norms.toUpperCase()}</span> com tema de análise {currentChat.config.theme}.
           </p>
         </div>
       </CardContent>
