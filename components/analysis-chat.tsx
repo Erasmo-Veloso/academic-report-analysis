@@ -1,20 +1,38 @@
 'use client';
 
+import { useState } from 'react';
 import { useChat } from '@/lib/chat-context';
-import { EmptyAnalysisState } from '@/components/empty-analysis-state';
-import { AnalysisChat } from '@/components/analysis-chat';
+import { Message, AnalysisRequest } from '@/lib/types';
+import { ChatInterface } from '@/components/chat-interface';
+import { ChatConfigPanel } from '@/components/chat-config-panel';
+import { DocumentUpload } from '@/components/document-upload';
+import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
-export function HomePageContent() {
-  const { currentChat } = useChat();
+export function AnalysisChat() {
+  const { currentChat, addMessage, getCohereKey } = useChat();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showConfigPanel, setShowConfigPanel] = useState(true);
 
-  // Render empty state if no analysis is selected
-  if (!currentChat) {
-    return <EmptyAnalysisState />;
-  }
+  const handleSendMessage = async (userMessage: string) => {
+    if (!currentChat) return;
 
-  // Render analysis chat interface
-  return <AnalysisChat />;
-}
+    // Add user message to chat
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: userMessage,
+      timestamp: Date.now(),
+    };
+    addMessage(userMsg);
+
+    setIsLoading(true);
+
+    try {
+      const apiKey = getCohereKey();
+      if (!apiKey) {
+        throw new Error('Chave de API Cohere não configurada. Configure em Configurações.');
+      }
 
       // Check if user is asking for analysis
       const isAskingForAnalysis =
@@ -44,7 +62,7 @@ export function HomePageContent() {
 
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.details || error.error || 'Falha na análise');
+          throw new Error(error.details || 'Erro ao analisar documento');
         }
 
         const data = await response.json();
@@ -79,15 +97,6 @@ ${analysis.suggestions || 'Nenhuma sugestão adicional'}`;
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
-      } else if (isAskingForAnalysis && (!currentChat.documentPages || currentChat.documentPages.length === 0)) {
-        // User asked for analysis but no document uploaded
-        const assistantMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: 'Por favor, envie um documento primeiro para análise. Use a seção "Enviar Documento" na direita.',
-          timestamp: Date.now(),
-        };
-        addMessage(assistantMsg);
       } else {
         // Regular conversation with Cohere
         try {
@@ -105,27 +114,26 @@ ${analysis.suggestions || 'Nenhuma sugestão adicional'}`;
           });
 
           if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Falha na comunicação');
+            throw new Error('Erro ao enviar mensagem');
           }
 
           const data = await response.json();
           const assistantMsg: Message = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
-            content: data.response,
+            content: data.response || 'Desculpe, não consegui processar sua mensagem.',
             timestamp: Date.now(),
           };
           addMessage(assistantMsg);
-        } catch (chatError) {
-          console.error('[v0] Chat error:', chatError);
-          const assistantMsg: Message = {
+        } catch (error) {
+          console.error('[v0] Erro na conversa:', error);
+          const errorMsg: Message = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
-            content: 'Desculpe, houve um erro na comunicação. Tente novamente ou solicite uma análise de um documento.',
+            content: `Erro: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
             timestamp: Date.now(),
           };
-          addMessage(assistantMsg);
+          addMessage(errorMsg);
         }
       }
     } catch (error) {
@@ -142,39 +150,6 @@ ${analysis.suggestions || 'Nenhuma sugestão adicional'}`;
       setIsLoading(false);
     }
   };
-
-  if (!currentChat) {
-    return (
-      <div className="flex items-center justify-center h-full px-4">
-        <div className="max-w-md w-full space-y-6 text-center">
-          <div className="space-y-3">
-            <h2 className="text-4xl font-bold text-foreground text-balance">
-              Que relatórios vamos analisar hoje?
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Nosso analisador acadêmico examina seus documentos com inteligência artificial, 
-              fornecendo feedback detalhado sobre estrutura, clareza, referências e muito mais. 
-              Suportamos PDF, DOCX e TXT.
-            </p>
-          </div>
-          
-          <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
-            <p className="text-sm font-medium text-foreground">
-              Comece clicando em <span className="text-primary font-semibold">"+ Nova Análise"</span> na barra lateral
-            </p>
-          </div>
-
-          <Button 
-            onClick={() => window.location.href = '/#new-analysis'}
-            size="lg"
-            className="w-full"
-          >
-            + Criar Nova Análise
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full overflow-hidden p-4">
