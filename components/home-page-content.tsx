@@ -94,14 +94,44 @@ export function HomePageContent() {
         };
         addMessage(assistantMsg);
       } else {
-        // Regular conversation
-        const assistantMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: 'Posso ajudar com análise e feedback sobre seu trabalho acadêmico. Tente enviar um documento e solicitar feedback específico sobre estrutura, clareza, citações ou outros aspectos.',
-          timestamp: Date.now(),
-        };
-        addMessage(assistantMsg);
+        // Regular conversation with Gemini
+        try {
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-gemini-key': apiKey,
+            },
+            body: JSON.stringify({
+              message: userMessage,
+              documentContext: currentChat.pages?.[0]?.text || '',
+              history: currentChat.messages.slice(-5),
+            }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Falha na comunicação');
+          }
+
+          const data = await response.json();
+          const assistantMsg: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: data.response,
+            timestamp: Date.now(),
+          };
+          addMessage(assistantMsg);
+        } catch (chatError) {
+          console.error('[v0] Chat error:', chatError);
+          const assistantMsg: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: 'Desculpe, houve um erro na comunicação. Tente novamente ou solicite uma análise de um documento.',
+            timestamp: Date.now(),
+          };
+          addMessage(assistantMsg);
+        }
       }
     } catch (error) {
       console.error('[v0] Erro:', error);

@@ -120,8 +120,8 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
         <div className="px-4 pt-2">
           <Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
             <AlertDescription className="text-destructive">
-              <strong className="block mb-1">Error:</strong> {apiError}
-              <p className="text-xs mt-2 opacity-80">Check your Gemini API key in Settings</p>
+              <strong className="block mb-1">Erro:</strong> {apiError}
+              <p className="text-xs mt-2 opacity-80">Verifique sua chave de API Gemini em Configurações</p>
             </AlertDescription>
           </Alert>
         </div>
@@ -133,10 +133,10 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask for analysis, feedback, or questions about your report..."
+            placeholder="Solicite uma análise, feedback ou perguntas sobre seu relatório..."
             disabled={isLoading}
             className="min-h-20 resize-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Message input"
+            aria-label="Entrada de mensagem"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && e.ctrlKey) {
                 handleSubmit(e as any);
@@ -151,7 +151,7 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
               aria-busy={isLoading}
             >
               <Send className="w-4 h-4 mr-2" aria-hidden="true" />
-              {isLoading ? 'Analyzing...' : 'Send'}
+              {isLoading ? 'Analisando...' : 'Enviar'}
             </Button>
             <Button
               type="button"
@@ -159,8 +159,8 @@ export function ChatInterface({ onSendMessage, isLoading = false }: ChatInterfac
               size="icon"
               disabled={isLoading}
               onClick={() => setInput('')}
-              title="Clear message"
-              aria-label="Clear message input"
+              title="Limpar mensagem"
+              aria-label="Limpar entrada de mensagem"
             >
               <Trash className="w-4 h-4" aria-hidden="true" />
             </Button>

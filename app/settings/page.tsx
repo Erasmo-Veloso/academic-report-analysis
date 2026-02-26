@@ -31,22 +31,22 @@ export default function SettingsPage() {
       <div className="min-h-screen p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Settings</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Configurações</h1>
           <p className="text-muted-foreground">
-            Configure your Academic Report Analyzer
+            Configure seu Analisador de Relatórios Acadêmicos
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Google Gemini API Key</CardTitle>
+            <CardTitle>Chave de API do Google Gemini</CardTitle>
             <CardDescription>
-              Your API key is stored locally in your browser and never sent to our servers.
+              Sua chave de API é armazenada localmente no seu navegador e nunca é enviada aos nossos servidores.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="api-key">API Key</Label>
+              <Label htmlFor="api-key">Chave de API</Label>
               <div className="flex gap-2">
                 <Input
                   id="api-key"
@@ -61,11 +61,11 @@ export default function SettingsPage() {
                   onClick={() => setShowKey(!showKey)}
                   className="px-3"
                 >
-                  {showKey ? 'Hide' : 'Show'}
+                  {showKey ? 'Ocultar' : 'Mostrar'}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Get your API key from{' '}
+                Obtenha sua chave de API em{' '}
                 <a
                   href="https://makersuite.google.com/app/apikey"
                   target="_blank"
@@ -78,38 +78,38 @@ export default function SettingsPage() {
             </div>
 
             <Button onClick={handleSave} className="w-full">
-              {saved ? '✓ Saved' : 'Save API Key'}
+              {saved ? '✓ Salvo' : 'Salvar Chave de API'}
             </Button>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Data & Privacy</CardTitle>
+            <CardTitle>Dados e Privacidade</CardTitle>
             <CardDescription>
-              How your data is handled
+              Como seus dados são processados
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
             <div className="space-y-2">
-              <p className="font-semibold">Local Storage</p>
+              <p className="font-semibold">Armazenamento Local</p>
               <p className="text-muted-foreground">
-                All your chats, configurations, and documents are stored locally in your browser's localStorage.
-                They never leave your device unless you explicitly export them.
+                Todos os seus chats, configurações e documentos são armazenados localmente no localStorage do seu navegador.
+                Eles nunca saem do seu dispositivo a menos que você os exporte explicitamente.
               </p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold">API Requests</p>
+              <p className="font-semibold">Requisições de API</p>
               <p className="text-muted-foreground">
-                When you send a report for analysis, the report content and your configuration are sent to Google's
-                Gemini API. We do not store these requests on our servers.
+                Quando você envia um relatório para análise, o conteúdo e sua configuração são enviados para a API Gemini do Google.
+                Não armazenamos essas requisições em nossos servidores.
               </p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold">API Key Security</p>
+              <p className="font-semibold">Segurança da Chave de API</p>
               <p className="text-muted-foreground">
-                Your Gemini API key is stored only in your browser's localStorage and is never logged,
-                shared, or sent anywhere except directly to Google's API.
+                Sua chave de API Gemini é armazenada apenas no localStorage do seu navegador e nunca é registrada,
+                compartilhada ou enviada para qualquer lugar exceto diretamente para a API do Google.
               </p>
             </div>
           </CardContent>
@@ -117,18 +117,17 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>About</CardTitle>
+            <CardTitle>Sobre</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Academic Report Analyzer v1.0
+              Analisador de Relatórios Acadêmicos v1.0
             </p>
             <p className="text-muted-foreground">
-              Powered by Google Gemini
+              Desenvolvido com Google Gemini
             </p>
           </CardContent>
         </Card>
-      </div>
       </div>
     </main>
   );
