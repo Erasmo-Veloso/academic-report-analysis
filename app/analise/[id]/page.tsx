@@ -16,19 +16,20 @@ export default function AnalysisPage({ params }: AnalysisPageProps) {
   const { chats, setCurrentChat, currentChatId } = useChat();
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
+  const chatId = resolvedParams.id;
 
   useEffect(() => {
-    const chat = chats.find(c => c.id === resolvedParams.id);
+    const chat = chats.find(c => c.id === chatId);
     if (chat) {
-      setCurrentChat(resolvedParams.id);
+      setCurrentChat(chatId);
       setIsReady(true);
     } else {
       router.push('/');
     }
-  }, [resolvedParams.id, chats, setCurrentChat, router]);
+  }, [chatId, chats, setCurrentChat, router]);
 
   // Wait until currentChatId matches the URL id
-  if (!isReady || currentChatId !== resolvedParams.id) {
+  if (!isReady || currentChatId !== chatId) {
     return (
       <main className="flex-1 overflow-auto bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Carregando análise...</p>
