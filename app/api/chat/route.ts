@@ -79,7 +79,15 @@ Responda em português de forma clara, concisa e profissional.`;
     }
 
     const cohereData = await cohereResponse.json();
-    const response = cohereData.text;
+    // Cohere Chat API returns response in 'text' field
+    const response = cohereData.text || '';
+
+    if (!response) {
+      return NextResponse.json(
+        { error: 'Resposta vazia da API Cohere' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ response });
   } catch (error) {

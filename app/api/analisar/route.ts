@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AnalysisRequest, AnalysisResponse } from '@/lib/types';
 import { buildAnalysisPrompt } from '@/lib/prompt-builder';
 
-const COHERE_API_URL = 'https://api.cohere.com/v1/generate';
-
 export async function POST(request: NextRequest) {
   try {
     const apiKey = request.headers.get('x-cohere-key');
@@ -33,8 +31,8 @@ export async function POST(request: NextRequest) {
     // Build prompt
     const prompt = buildAnalysisPrompt(body.pages, body.config, body.userContext);
 
-    // Send to Cohere API
-    const cohereResponse = await fetch(COHERE_API_URL, {
+    // Send to Cohere Chat API (migrated from deprecated Generate API)
+    const cohereResponse = await fetch('https://api.cohere.com/v1/chat', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -42,15 +40,28 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         model: 'command-r-plus',
-        prompt: prompt,
-        max_tokens: 2000,
-        temperature: 0.8,
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        max_tokens: 4096,
+        temperature: 0.7,
       }),
     });
 
     if (!cohereResponse.ok) {
       const errorData = await cohereResponse.json();
       console.error('[v0] Erro Cohere:', errorData);
+
+      if (cohereResponse.status === 429) {
+        return NextResponse.json(
+          { details: 'Limite de requisições atingido. Aguarde alguns momentos e tente novamente.' },
+          { status: 429 }
+        );
+      }
+
       return NextResponse.json(
         { details: errorData.message || 'Erro ao processar com Cohere' },
         { status: cohereResponse.status }
@@ -58,7 +69,14 @@ export async function POST(request: NextRequest) {
     }
 
     const cohereData = await cohereResponse.json();
-    const analysisText = cohereData.generations[0].text;
+    const analysisText = cohereData.text || '';
+
+    if (!analysisText) {
+      return NextResponse.json(
+        { details: 'Resposta vazia da API Cohere' },
+        { status: 500 }
+      );
+    }
 
     // Parse the response into structured format
     const analysis = parseAnalysisResponse(analysisText);
