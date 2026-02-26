@@ -6,15 +6,12 @@ import { Message, AnalysisRequest } from '@/lib/types';
 import { ChatInterface } from '@/components/chat-interface';
 import { ChatConfigPanel } from '@/components/chat-config-panel';
 import { DocumentUpload } from '@/components/document-upload';
-import { AnalysisDisplay } from '@/components/analysis-display';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 
 export function HomePageContent() {
   const { currentChat, addMessage, getCohereKey } = useChat();
   const [isLoading, setIsLoading] = useState(false);
-  const [showAnalysis, setShowAnalysis] = useState(false);
-  const [lastAnalysis, setLastAnalysis] = useState<any>(null);
   const [showConfigPanel, setShowConfigPanel] = useState(true);
 
   const handleSendMessage = async (userMessage: string) => {
@@ -70,16 +67,33 @@ export function HomePageContent() {
 
         const data = await response.json();
 
-        // Store analysis and show it
-        setLastAnalysis(data.analysis);
-        setShowAnalysis(true);
+        // Format analysis result as a comprehensive chat message
+        const analysis = data.analysis;
+        const scoreLabel = analysis.score >= 80 ? 'Excelente' : analysis.score >= 60 ? 'Bom' : 'Precisa Melhorar';
+        
+        const analysisMessage = `**Análise Concluída**
 
-        // Add assistant response
-        const scoreLabel = data.analysis.score >= 80 ? 'Excelente' : data.analysis.score >= 60 ? 'Bom' : 'Precisa Melhorar';
+**Pontuação: ${analysis.score}/100** (${scoreLabel})
+**Qualidade: ${analysis.qualityLevel}**
+
+---
+
+**PROBLEMAS GERAIS:**
+${analysis.generalProblems || 'Nenhum problema geral identificado'}
+
+**PROBLEMAS POR PÁGINA:**
+${analysis.pageProblems?.map(p => `• Página ${p.pageNumber}: ${p.problems}`).join('\n') || 'Nenhum problema por página identificado'}
+
+**ERROS EM REFERÊNCIAS:**
+${analysis.referenceErrors || 'Nenhum erro em referências'}
+
+**SUGESTÕES DE MELHORIA:**
+${analysis.suggestions || 'Nenhuma sugestão adicional'}`;
+
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: `Análise concluída! Pontuação: ${data.analysis.score}/100 (${scoreLabel})\n\nVeja o painel à direita para feedback detalhado sobre estrutura, linguagem, referências e sugestões.`,
+          content: analysisMessage,
           timestamp: Date.now(),
         };
         addMessage(assistantMsg);
@@ -220,14 +234,6 @@ export function HomePageContent() {
 
           {/* Document Upload */}
           <DocumentUpload />
-
-          {/* Analysis Display */}
-          {showAnalysis && lastAnalysis && (
-            <div className="mt-4">
-              <h2 className="text-lg font-semibold mb-3 text-foreground">Resultados da Análise</h2>
-              <AnalysisDisplay analysis={lastAnalysis} />
-            </div>
-          )}
         </div>
       </div>
     </div>
