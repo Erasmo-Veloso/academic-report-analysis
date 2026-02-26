@@ -3,11 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Link from 'next/link';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function SettingsPage() {
   const { getCohereKey, setCohereKey } = useChat();
@@ -32,23 +30,18 @@ export default function SettingsPage() {
     <main className="flex-1 overflow-auto bg-background">
       <div className="min-h-screen p-8">
         <div className="max-w-2xl mx-auto space-y-8">
-          <div className="flex items-center gap-3">
-            <Link href="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl font-bold text-foreground">Configurações</h1>
-              <p className="text-muted-foreground">Configure seu Analisador de Relatórios Acadêmicos</p>
-            </div>
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Configurações</h1>
+            <p className="text-muted-foreground">
+              Configure seu Analisador de Relatórios Acadêmicos
+            </p>
           </div>
 
           <Card>
             <CardHeader>
               <CardTitle>Chave de API Cohere</CardTitle>
               <CardDescription>
-                Sua chave é armazenada localmente e nunca é enviada aos nossos servidores.
+                Sua chave de API é armazenada localmente no seu navegador
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -68,7 +61,7 @@ export default function SettingsPage() {
                     onClick={() => setShowKey(!showKey)}
                     className="px-3"
                   >
-                    {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showKey ? 'Ocultar' : 'Mostrar'}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -92,19 +85,19 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Privacidade e Segurança</CardTitle>
+              <CardTitle>Privacidade</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <div className="space-y-2">
-                <h3 className="font-semibold">Armazenamento Local</h3>
+                <p className="font-semibold">Armazenamento Local</p>
                 <p className="text-muted-foreground">
-                  Todos os seus chats e documentos são armazenados no localStorage do seu navegador.
+                  Todos os seus dados são armazenados localmente no navegador
                 </p>
               </div>
               <div className="space-y-2">
-                <h3 className="font-semibold">Requisições de API</h3>
+                <p className="font-semibold">Chave de API</p>
                 <p className="text-muted-foreground">
-                  Quando você envia relatórios para análise, o conteúdo é enviado apenas para a API Cohere.
+                  Sua chave Cohere é armazenada apenas no localStorage
                 </p>
               </div>
             </CardContent>

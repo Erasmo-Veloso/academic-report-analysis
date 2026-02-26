@@ -8,19 +8,13 @@ import { formatTimestamp, truncateText } from '@/lib/utils-document';
 import { Download, Trash2, Plus, Settings } from 'lucide-react';
 
 export function ChatSidebar() {
-  const { chats, currentChatId, createChat, deleteChat, setCurrentChat, exportChatAsJson } = useChat();
+  const { chats, currentChatId, createChat, deleteChat, exportChatAsJson } = useChat();
   const router = useRouter();
 
   const handleNewChat = () => {
     const newChat = createChat();
-    setTimeout(() => {
-      router.push(`/analise/${newChat.id}`);
-    }, 0);
+    router.push(`/analise/${newChat.id}`);
   };
-
-  const handleClickChat = (chatId: string) => {
-    setCurrentChat(chatId)
-  }
 
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -77,7 +71,6 @@ export function ChatSidebar() {
                 <Link
                   key={chat.id}
                   href={`/analise/${chat.id}`}
-                  onClick={() => handleClickChat(chat.id)}
                   className={`
                     group relative p-3 rounded-lg transition-all duration-200 block
                     ${isCurrent

@@ -7,20 +7,20 @@ interface ChatContextType {
   chats: Chat[];
   currentChatId: string | null;
   currentChat: Chat | null;
-  
+
   createChat: (config?: ChatConfig) => Chat;
   deleteChat: (id: string) => void;
   updateChatTitle: (id: string, title: string) => void;
   setCurrentChat: (id: string) => void;
-  
+
   addMessage: (message: Message) => void;
   updateChatDocument: (id: string, content: string, fileName: string) => void;
   updateChatPages: (id: string, pages: PagedDocument[], fileName: string) => void;
   updateChatConfig: (id: string, config: Partial<ChatConfig>) => void;
-  
+
   getCohereKey: () => string | null;
   setCohereKey: (key: string) => void;
-  
+
   exportChatAsJson: (id: string) => void;
 }
 
@@ -37,9 +37,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(savedChats);
         setChats(parsed);
-        if (parsed.length > 0) {
-          setCurrentChatId(parsed[0].id);
-        }
       } catch (e) {
         console.error('[v0] Falha ao carregar análises:', e);
       }
@@ -60,7 +57,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       workType: 'relatorio_escolar',
       focusAnalysis: 'todos',
     };
-    
+
     const newChat: Chat = {
       id: Date.now().toString(),
       title: `Análise - ${new Date().toLocaleDateString('pt-BR')}`,
@@ -102,10 +99,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       prev.map(c =>
         c.id === currentChatId
           ? {
-              ...c,
-              messages: [...c.messages, message],
-              updatedAt: Date.now(),
-            }
+            ...c,
+            messages: [...c.messages, message],
+            updatedAt: Date.now(),
+          }
           : c
       )
     );
@@ -116,10 +113,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       prev.map(c =>
         c.id === id
           ? {
-              ...c,
-              documentFileName: fileName,
-              updatedAt: Date.now(),
-            }
+            ...c,
+            documentFileName: fileName,
+            updatedAt: Date.now(),
+          }
           : c
       )
     );
@@ -130,11 +127,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       prev.map(c =>
         c.id === id
           ? {
-              ...c,
-              documentPages: pages,
-              documentFileName: fileName,
-              updatedAt: Date.now(),
-            }
+            ...c,
+            documentPages: pages,
+            documentFileName: fileName,
+            updatedAt: Date.now(),
+          }
           : c
       )
     );
@@ -145,10 +142,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       prev.map(c =>
         c.id === id
           ? {
-              ...c,
-              config: { ...c.config, ...config },
-              updatedAt: Date.now(),
-            }
+            ...c,
+            config: { ...c.config, ...config },
+            updatedAt: Date.now(),
+          }
           : c
       )
     );
