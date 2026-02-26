@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+
 export function EmptyAnalysisState() {
   return (
     <div className="flex items-center justify-center h-full px-4">
@@ -20,6 +22,14 @@ export function EmptyAnalysisState() {
             Comece clicando em <span className="text-primary font-semibold">"+ Nova Análise"</span> na barra lateral
           </p>
         </div>
+
+        <Button 
+          onClick={() => window.location.href = '/#new-analysis'}
+          size="lg"
+          className="w-full"
+        >
+          + Criar Nova Análise
+        </Button>
       </div>
     </div>
   );
