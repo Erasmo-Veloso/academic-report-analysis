@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const client = new GoogleGenerativeAI(apiKey);
-    const model = client.getGenerativeModel({ model: 'gemini-pro' });
+    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     // Build conversation history
     const conversationHistory = [];
