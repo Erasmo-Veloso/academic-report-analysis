@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useChat } from '@/lib/chat-context';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function SettingsPage() {
   const { getCohereKey, setCohereKey } = useChat();
@@ -78,28 +78,18 @@ export default function SettingsPage() {
               </div>
 
               <Button onClick={handleSave} className="w-full">
-                {saved ? '✓ Salvo' : 'Salvar Chave de API'}
+                {saved ? 'Salvo' : 'Salvar Chave'}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Privacidade</CardTitle>
+              <CardTitle>Sobre</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-sm">
-              <div className="space-y-2">
-                <p className="font-semibold">Armazenamento Local</p>
-                <p className="text-muted-foreground">
-                  Todos os seus dados são armazenados localmente no navegador
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Chave de API</p>
-                <p className="text-muted-foreground">
-                  Sua chave Cohere é armazenada apenas no localStorage
-                </p>
-              </div>
+            <CardContent className="text-sm text-muted-foreground space-y-2">
+              <p>Analisador de Relatórios Acadêmicos v1.0</p>
+              <p>Desenvolvido com Cohere AI</p>
             </CardContent>
           </Card>
         </div>
