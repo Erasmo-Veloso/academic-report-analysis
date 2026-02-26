@@ -37,16 +37,16 @@ export default function SettingsPage() {
             </p>
           </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Chave de API Cohere</CardTitle>
-            <CardDescription>
-              Sua chave de API é armazenada localmente no seu navegador e nunca é enviada aos nossos servidores.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="api-key">Chave de API</Label>
+          <Card>
+            <CardHeader>
+              <CardTitle>Chave de API Cohere</CardTitle>
+              <CardDescription>
+                Sua chave de API é armazenada localmente no seu navegador e nunca é enviada aos nossos servidores.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="api-key">Chave de API</Label>
                 <div className="flex gap-2">
                   <Input
                     id="api-key"
@@ -64,22 +64,22 @@ export default function SettingsPage() {
                     {showKey ? 'Ocultar' : 'Mostrar'}
                   </Button>
                 </div>
-              <p className="text-xs text-muted-foreground">
-                Obtenha sua chave de API em{' '}
-                <a
-                  href="https://dashboard.cohere.ai/api-keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-foreground"
-                >
-                  Cohere Dashboard
-                </a>
-              </p>
+                <p className="text-xs text-muted-foreground">
+                  Obtenha sua chave de API em{' '}
+                  <a
+                    href="https://dashboard.cohere.ai/api-keys"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-foreground"
+                  >
+                    Cohere Dashboard
+                  </a>
+                </p>
               </div>
 
-            <Button onClick={handleSave} className="w-full">
-              {saved ? '✓ Salvo' : 'Salvar Chave de API Cohere'}
-            </Button>
+              <Button onClick={handleSave} className="w-full">
+                {saved ? '✓ Salvo' : 'Salvar Chave de API Cohere'}
+              </Button>
             </CardContent>
           </Card>
 
@@ -101,17 +101,17 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <p className="font-semibold">Requisições de API</p>
                 <p className="text-muted-foreground">
-                  Quando você envia um relatório para análise, o conteúdo e sua configuração são enviados para a API Gemini do Google.
+                  Quando você envia um relatório para análise, o conteúdo e sua configuração são enviados para a API Cohere.
                   Não armazenamos essas requisições em nossos servidores.
                 </p>
               </div>
-            <div className="space-y-2">
-              <p className="font-semibold">Segurança da Chave de API</p>
-              <p className="text-muted-foreground">
-                Sua chave de API Cohere é armazenada apenas no localStorage do seu navegador e nunca é registrada,
-                compartilhada ou enviada para qualquer lugar exceto diretamente para a API do Cohere.
-              </p>
-            </div>
+              <div className="space-y-2">
+                <p className="font-semibold">Segurança da Chave de API</p>
+                <p className="text-muted-foreground">
+                  Sua chave de API Cohere é armazenada apenas no localStorage do seu navegador e nunca é registrada,
+                  compartilhada ou enviada para qualquer lugar exceto diretamente para a API do Cohere.
+                </p>
+              </div>
             </CardContent>
           </Card>
 
@@ -119,15 +119,16 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Sobre</CardTitle>
             </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p className="text-muted-foreground">
-              Analisador de Relatórios Acadêmicos v1.0
-            </p>
-            <p className="text-muted-foreground">
-              Desenvolvido com Cohere AI
-            </p>
-          </CardContent>
-        </Card>
+            <CardContent className="space-y-2 text-sm">
+              <p className="text-muted-foreground">
+                Analisador de Relatórios Acadêmicos v1.0
+              </p>
+              <p className="text-muted-foreground">
+                Desenvolvido com Cohere AI
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </main>
   );
