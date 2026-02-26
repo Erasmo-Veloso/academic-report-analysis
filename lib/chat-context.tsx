@@ -8,7 +8,7 @@ interface ChatContextType {
   currentChatId: string | null;
   currentChat: Chat | null;
   
-  createChat: (config: ChatConfig) => void;
+  createChat: (config?: ChatConfig) => Chat;
   deleteChat: (id: string) => void;
   updateChatTitle: (id: string, title: string) => void;
   setCurrentChat: (id: string) => void;
@@ -53,11 +53,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const currentChat = chats.find(c => c.id === currentChatId) || null;
 
-  const createChat = (config: ChatConfig) => {
+  const createChat = (config?: ChatConfig): Chat => {
+    const defaultConfig: ChatConfig = config || {
+      academicLevel: 'graduacao',
+      norms: 'abnt',
+      workType: 'relatorio_escolar',
+      focusAnalysis: 'todos',
+    };
+    
     const newChat: Chat = {
       id: Date.now().toString(),
       title: `Análise - ${new Date().toLocaleDateString('pt-BR')}`,
-      config,
+      config: defaultConfig,
       messages: [],
       documentPages: [],
       createdAt: Date.now(),
@@ -65,6 +72,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
     setChats(prev => [newChat, ...prev]);
     setCurrentChatId(newChat.id);
+    return newChat;
   };
 
   const deleteChat = (id: string) => {

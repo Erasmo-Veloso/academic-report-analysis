@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useChat } from '@/lib/chat-context';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function SettingsPage() {
   const { getCohereKey, setCohereKey } = useChat();
@@ -61,7 +62,7 @@ export default function SettingsPage() {
                     onClick={() => setShowKey(!showKey)}
                     className="px-3"
                   >
-                    {showKey ? 'Ocultar' : 'Mostrar'}
+                    {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -78,7 +79,7 @@ export default function SettingsPage() {
               </div>
 
               <Button onClick={handleSave} className="w-full">
-                {saved ? '✓ Salvo' : 'Salvar Chave de API Cohere'}
+                {saved ? '✓ Salvo' : 'Salvar Chave de API'}
               </Button>
             </CardContent>
           </Card>
@@ -86,30 +87,25 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Dados e Privacidade</CardTitle>
-              <CardDescription>
-                Como seus dados são processados
-              </CardDescription>
+              <CardDescription>Como seus dados são processados</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <div className="space-y-2">
                 <p className="font-semibold">Armazenamento Local</p>
                 <p className="text-muted-foreground">
                   Todos os seus chats, configurações e documentos são armazenados localmente no localStorage do seu navegador.
-                  Eles nunca saem do seu dispositivo a menos que você os exporte explicitamente.
                 </p>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold">Requisições de API</p>
                 <p className="text-muted-foreground">
                   Quando você envia um relatório para análise, o conteúdo e sua configuração são enviados para a API Cohere.
-                  Não armazenamos essas requisições em nossos servidores.
                 </p>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold">Segurança da Chave de API</p>
                 <p className="text-muted-foreground">
-                  Sua chave de API Cohere é armazenada apenas no localStorage do seu navegador e nunca é registrada,
-                  compartilhada ou enviada para qualquer lugar exceto diretamente para a API do Cohere.
+                  Sua chave de API Cohere é armazenada apenas no localStorage do seu navegador e nunca é compartilhada.
                 </p>
               </div>
             </CardContent>
@@ -120,12 +116,8 @@ export default function SettingsPage() {
               <CardTitle>Sobre</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p className="text-muted-foreground">
-                Analisador de Relatórios Acadêmicos v1.0
-              </p>
-              <p className="text-muted-foreground">
-                Desenvolvido com Cohere AI
-              </p>
+              <p className="text-muted-foreground">Analisador de Relatórios Acadêmicos v1.0</p>
+              <p className="text-muted-foreground">Desenvolvido com Cohere AI</p>
             </CardContent>
           </Card>
         </div>

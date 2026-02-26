@@ -1,29 +1,26 @@
 'use client';
 
 import { useChat } from '@/lib/chat-context';
-import { ChatConfig } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { formatTimestamp, truncateText } from '@/lib/utils-document';
 import { Download, Trash2, Plus, Settings } from 'lucide-react';
 
 export function ChatSidebar() {
-  const { chats, currentChatId, setCurrentChat, createChat, deleteChat, exportChatAsJson } = useChat();
+  const { chats, currentChatId, createChat, deleteChat, exportChatAsJson } = useChat();
+  const router = useRouter();
 
   const handleNewChat = () => {
-    const defaultConfig: ChatConfig = {
-      academicLevel: 'undergraduate',
-      norms: 'apa',
-      workType: 'essay',
-      theme: 'academic',
-    };
-    createChat(defaultConfig);
+    const newChat = createChat();
+    router.push(`/analise/${newChat.id}`);
   };
 
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('Tem certeza que deseja deletar esta análise?')) {
       deleteChat(id);
+      router.push('/');
     }
   };
 
@@ -71,24 +68,16 @@ export function ChatSidebar() {
             {chats.map(chat => {
               const isCurrent = isCurrentChat(chat.id);
               return (
-                <div
+                <Link
                   key={chat.id}
-                  onClick={() => setCurrentChat(chat.id)}
+                  href={`/analise/${chat.id}`}
                   className={`
-                    group relative p-3 rounded-lg cursor-pointer transition-all duration-200
+                    group relative p-3 rounded-lg transition-all duration-200 block
                     ${isCurrent
                       ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md'
                       : 'bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground'
                     }
                   `}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setCurrentChat(chat.id);
-                    }
-                  }}
                   aria-current={isCurrent}
                   aria-label={`Análise: ${chat.title}`}
                 >
@@ -142,7 +131,7 @@ export function ChatSidebar() {
                       <span className="sr-only">Delete</span>
                     </button>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
