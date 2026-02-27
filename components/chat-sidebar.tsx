@@ -17,6 +17,7 @@ export function ChatSidebar() {
 
   const handleSelectChat = (chatId: string) => {
     setCurrentChat(chatId);
+    router.push(`/analise/${chatId}`);
   };
 
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
