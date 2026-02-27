@@ -12,24 +12,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Analisador de Relatórios Acadêmicos",
   description:
-    "Análise de relatórios acadêmicos com inteligência artificial - Feedback detalhado, configurações únicas e suporte para PDF, DOCX e TXT",
-  icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
-  },
+    "Análise de relatórios acadêmicos com inteligência artificial - Feedback detalhado, configurações únicas e suporte para PDF, DOCX e TXT\nFeito por: Grupo d' luxo de PT 12.ª, turma A1, 2026, ITEL",
 };
 
 export default function RootLayout({
