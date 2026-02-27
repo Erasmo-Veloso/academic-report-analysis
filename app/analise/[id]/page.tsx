@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, use } from 'react';
+import { useEffect, use, useRef } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { AnalysisChat } from '@/components/analysis-chat';
 
@@ -12,8 +12,13 @@ interface AnalysisPageProps {
 
 function AnalysisPageContent({ chatId }: { chatId: string }) {
   const { setCurrentChat } = useChat();
+  const syncedRouteChatId = useRef<string | null>(null);
 
   useEffect(() => {
+    if (syncedRouteChatId.current === chatId) {
+      return;
+    }
+    syncedRouteChatId.current = chatId;
     setCurrentChat(chatId);
   }, [chatId, setCurrentChat]);
 
