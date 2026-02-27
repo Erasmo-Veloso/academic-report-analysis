@@ -1,40 +1,40 @@
-import { ChatConfig, PagedDocument } from './types';
+import { ChatConfig, PagedDocument } from "./types";
 
 export function buildAnalysisPrompt(
   pages: PagedDocument[],
   config: ChatConfig,
-  userContext?: string
+  userContext?: string,
 ): string {
   const academicLevelMap = {
-    ensino_medio: 'Ensino Médio',
-    graduacao: 'Graduação',
-    pos_graduacao: 'Pós-graduação',
+    ensino_medio: "Ensino Médio",
+    graduacao: "Graduação",
+    pos_graduacao: "Pós-graduação",
   };
 
   const normsMap = {
-    apa: 'APA',
-    abnt: 'ABNT',
-    vancouver: 'Vancouver',
-    outra: 'Outra',
+    apa: "APA",
+    abnt: "ABNT",
+    vancouver: "Vancouver",
+    outra: "Outra",
   };
 
   const workTypeMap = {
-    relatorio_escolar: 'Relatório Escolar',
-    artigo_cientifico: 'Artigo Científico',
-    projeto_tecnologico: 'Projeto Tecnológico',
-    tcc: 'Trabalho de Conclusão de Curso (TCC)',
+    relatorio_escolar: "Relatório Escolar",
+    artigo_cientifico: "Artigo Científico",
+    projeto_tecnologico: "Projeto Tecnológico",
+    tcc: "Trabalho de Conclusão de Curso (TCC)",
   };
 
   const focusMap = {
-    estrutura: 'estrutura e organização',
-    linguagem: 'clareza de linguagem e coerência',
-    referencias: 'citações e referências',
-    todos: 'todos os aspectos',
+    estrutura: "estrutura e organização",
+    linguagem: "clareza de linguagem e coerência",
+    referencias: "citações e referências",
+    todos: "todos os aspectos",
   };
 
   const pagesText = pages
-    .map(p => `--- Página ${p.pageNumber} ---\n${p.text}`)
-    .join('\n\n');
+    .map((p) => `--- Página ${p.pageNumber} ---\n${p.text}`)
+    .join("\n\n");
 
   return `Você é um avaliador acadêmico especializado em normas científicas e análise textual.
 
@@ -48,7 +48,7 @@ PARÂMETROS DA ANÁLISE:
 - Foco da Análise: ${focusMap[config.focusAnalysis]}
 
 CONTEXTO DO USUÁRIO:
-${userContext || 'Nenhum contexto adicional fornecido.'}
+${userContext || "Nenhum contexto adicional fornecido."}
 
 INSTRUÇÕES:
 Analise o texto fornecido considerando os parâmetros acima. Avalie:
@@ -94,35 +94,37 @@ IMPORTANTE:
 export function buildChatPrompt(
   message: string,
   config: ChatConfig,
-  documentContext?: string
+  documentContext?: string,
 ): string {
   const academicLevelMap = {
-    ensino_medio: 'Ensino Médio',
-    graduacao: 'Graduação',
-    pos_graduacao: 'Pós-graduação',
+    ensino_medio: "Ensino Médio",
+    graduacao: "Graduação",
+    pos_graduacao: "Pós-graduação",
   };
 
   const normsMap = {
-    apa: 'APA',
-    abnt: 'ABNT',
-    vancouver: 'Vancouver',
-    outra: 'Outra',
+    apa: "APA",
+    abnt: "ABNT",
+    vancouver: "Vancouver",
+    outra: "Outra",
   };
 
-  return `Você é um assistente especializado em feedback acadêmico e análise textual.
+  return `Você é um tutor acadêmico especialista em escrita científica, que orienta o aluno com clareza, empatia e foco prático.
 
 CONFIGURAÇÕES DO USUÁRIO:
 - Nível Acadêmico: ${academicLevelMap[config.academicLevel]}
 - Norma Preferida: ${normsMap[config.norms]}
 
-${documentContext ? `CONTEXTO DO DOCUMENTO:\n${documentContext}\n` : ''}
+${documentContext ? `CONTEXTO DO DOCUMENTO:\n${documentContext}\n` : ""}
 
 PERGUNTA DO USUÁRIO:
 ${message}
 
 INSTRUÇÕES:
-- Responda de forma construtiva e profissional
+- Responda como tutor: explique o porquê e o como melhorar
+- Dê passos acionáveis e exemplos curtos quando útil
 - Relacione a resposta aos parâmetros acadêmicos do usuário quando relevante
-- Se o documento foi fornecido, faça referências específicas a ele
-- Mantenha um tom educativo e de apoio`;
+- Se o documento foi fornecido, baseie as orientações na análise e no conteúdo enviado
+- Quando identificar problema, sugira uma correção prática
+- Mantenha tom educativo, encorajador e objetivo`;
 }
