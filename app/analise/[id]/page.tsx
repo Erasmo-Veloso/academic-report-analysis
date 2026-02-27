@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, use, Suspense } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { useRouter } from 'next/navigation';
 import { HomePageContent } from '@/components/home-page-content';
@@ -14,19 +14,26 @@ interface AnalysisPageProps {
 function AnalysisPageContent({ chatId }: { chatId: string }) {
   const { chats, setCurrentChat, currentChatId } = useChat();
   const router = useRouter();
-  const [isReady, setIsReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Aguarda a hidratação do localStorage antes de avaliar os chats
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!isMounted) return;
+
     const chat = chats.find(c => c.id === chatId);
     if (chat) {
       setCurrentChat(chatId);
-      setIsReady(true);
     } else {
       router.push('/');
     }
-  }, [chatId, chats, setCurrentChat, router]);
+  }, [chatId, chats, isMounted, setCurrentChat, router]);
 
-  if (!isReady || currentChatId !== chatId) {
+  // Mostra loading enquanto o contexto ainda não sincronizou com o chatId da URL
+  if (!isMounted || currentChatId !== chatId) {
     return (
       <main className="flex-1 overflow-auto bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Carregando análise...</p>
@@ -44,9 +51,5 @@ function AnalysisPageContent({ chatId }: { chatId: string }) {
 export default function AnalysisPage({ params }: AnalysisPageProps) {
   const resolvedParams = use(params);
 
-  return (
-    <Suspense fallback={<div>Carregando...</div>}>
-      <AnalysisPageContent chatId={resolvedParams.id} />
-    </Suspense>
-  );
+  return <AnalysisPageContent chatId={resolvedParams.id} />;
 }
