@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { useRouter } from 'next/navigation';
-import { HomePageContent } from '@/components/home-page-content';
+import { AnalysisChat } from '@/components/analysis-chat';
 
 interface AnalysisPageProps {
   params: Promise<{
@@ -43,7 +43,7 @@ function AnalysisPageContent({ chatId }: { chatId: string }) {
 
   return (
     <main className="flex-1 overflow-hidden">
-      <HomePageContent />
+      <AnalysisChat />
     </main>
   );
 }

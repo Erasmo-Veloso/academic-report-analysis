@@ -2,13 +2,12 @@
 
 import { useChat } from '@/lib/chat-context';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatTimestamp, truncateText } from '@/lib/utils-document';
 import { Download, Trash2, Plus, Settings } from 'lucide-react';
 
 export function ChatSidebar() {
-  const { chats, currentChatId, createChat, deleteChat, exportChatAsJson } = useChat();
+  const { chats, currentChatId, createChat, deleteChat, setCurrentChat, exportChatAsJson } = useChat();
   const router = useRouter();
 
   const handleNewChat = () => {
@@ -16,11 +15,17 @@ export function ChatSidebar() {
     router.push(`/analise/${newChat.id}`);
   };
 
+  const handleSelectChat = (chatId: string) => {
+    setCurrentChat(chatId);
+  };
+
   const handleDeleteChat = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('Tem certeza que deseja deletar esta análise?')) {
       deleteChat(id);
-      router.push('/');
+      if (currentChatId === id) {
+        router.push('/');
+      }
     }
   };
 
@@ -68,11 +73,11 @@ export function ChatSidebar() {
             {chats.map(chat => {
               const isCurrent = isCurrentChat(chat.id);
               return (
-                <Link
+                <button
                   key={chat.id}
-                  href={`/analise/${chat.id}`}
+                  onClick={() => handleSelectChat(chat.id)}
                   className={`
-                    group relative p-3 rounded-lg transition-all duration-200 block
+                    group relative p-3 rounded-lg transition-all duration-200 block w-full text-left
                     ${isCurrent
                       ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md'
                       : 'bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground'
@@ -96,7 +101,7 @@ export function ChatSidebar() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div
+                  <div 
                     className="flex gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -131,7 +136,7 @@ export function ChatSidebar() {
                       <span className="sr-only">Delete</span>
                     </button>
                   </div>
-                </Link>
+                </button>
               );
             })}
           </div>

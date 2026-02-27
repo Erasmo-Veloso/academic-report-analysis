@@ -6,6 +6,7 @@ import { Message, AnalysisRequest } from '@/lib/types';
 import { ChatInterface } from '@/components/chat-interface';
 import { ChatConfigPanel } from '@/components/chat-config-panel';
 import { DocumentUpload } from '@/components/document-upload';
+import { SkeletonLoader } from '@/components/skeleton-loader';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 
@@ -155,7 +156,13 @@ ${analysis.suggestions || 'Nenhuma sugestão adicional'}`;
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full overflow-hidden p-4">
       {/* Main Chat Area */}
       <div className="lg:col-span-2 flex flex-col overflow-hidden rounded-lg border border-border bg-background shadow-sm">
-        <ChatInterface onSendMessage={handleSendMessage} isLoading={isLoading} />
+        {isLoading ? (
+          <div className="flex-1 overflow-y-auto p-4">
+            <SkeletonLoader />
+          </div>
+        ) : (
+          <ChatInterface onSendMessage={handleSendMessage} isLoading={isLoading} />
+        )}
       </div>
 
       {/* Right Sidebar with Toggle */}
