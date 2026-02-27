@@ -11,26 +11,11 @@ interface AnalysisPageProps {
 }
 
 function AnalysisPageContent({ chatId }: { chatId: string }) {
-  const { setCurrentChat, currentChatId } = useChat();
+  const { setCurrentChat } = useChat();
 
   useEffect(() => {
-    // Se o currentChat já está sincronizado com a URL, não faz nada
-    if (currentChatId === chatId) {
-      return;
-    }
-
-    // Sincroniza o estado com a URL
     setCurrentChat(chatId);
-  }, [chatId, currentChatId, setCurrentChat]);
-
-  // Mostra loading enquanto o currentChatId não corresponde ao chatId da URL
-  if (currentChatId !== chatId) {
-    return (
-      <main className="flex-1 overflow-auto bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Carregando análise...</p>
-      </main>
-    );
-  }
+  }, [chatId, setCurrentChat]);
 
   return (
     <main className="flex-1 overflow-hidden">
