@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, use } from 'react';
+import { useEffect, use, useRef } from 'react';
 import { useChat } from '@/lib/chat-context';
 import { AnalysisChat } from '@/components/analysis-chat';
 
@@ -11,26 +11,16 @@ interface AnalysisPageProps {
 }
 
 function AnalysisPageContent({ chatId }: { chatId: string }) {
-  const { setCurrentChat, currentChatId } = useChat();
+  const { setCurrentChat } = useChat();
+  const syncedRouteChatId = useRef<string | null>(null);
 
   useEffect(() => {
-    // Se o currentChat já está sincronizado com a URL, não faz nada
-    if (currentChatId === chatId) {
+    if (syncedRouteChatId.current === chatId) {
       return;
     }
-
-    // Sincroniza o estado com a URL
+    syncedRouteChatId.current = chatId;
     setCurrentChat(chatId);
-  }, [chatId, currentChatId, setCurrentChat]);
-
-  // Mostra loading enquanto o currentChatId não corresponde ao chatId da URL
-  if (currentChatId !== chatId) {
-    return (
-      <main className="flex-1 overflow-auto bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Carregando análise...</p>
-      </main>
-    );
-  }
+  }, [chatId, setCurrentChat]);
 
   return (
     <main className="flex-1 overflow-hidden">
