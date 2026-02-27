@@ -40,12 +40,12 @@ export function ChatSidebar() {
     <aside className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col overflow-hidden shadow-sm">
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border bg-gradient-to-r from-sidebar to-sidebar/95">
-        <Link href="/" className="block group">
+        <button onClick={() => router.push('/')} className="block group w-full text-left hover:opacity-80 transition-opacity">
           <h1 className="text-lg font-bold text-sidebar-foreground group-hover:text-sidebar-primary transition-colors duration-200">
             Analisador de Relatórios
           </h1>
           <p className="text-xs text-sidebar-foreground/60 mt-1">Assistente de Escrita Acadêmica</p>
-        </Link>
+        </button>
       </div>
 
       {/* New Chat Button */}
@@ -145,15 +145,14 @@ export function ChatSidebar() {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border bg-sidebar/50 space-y-2">
-        <Link href="/settings" className="block">
-          <Button
-            variant="ghost"
-            className="w-full text-sm justify-start text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent/50 transition-colors duration-200"
-          >
-            <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
-            Configurações
-          </Button>
-        </Link>
+        <Button
+          onClick={() => router.push('/settings')}
+          variant="ghost"
+          className="w-full text-sm justify-start text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent/50 transition-colors duration-200"
+        >
+          <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
+          Configurações
+        </Button>
       </div>
     </aside>
   );
