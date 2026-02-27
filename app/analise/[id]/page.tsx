@@ -14,26 +14,25 @@ interface AnalysisPageProps {
 function AnalysisPageContent({ chatId }: { chatId: string }) {
   const { chats, setCurrentChat, currentChatId } = useChat();
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Aguarda a hidratação do localStorage antes de avaliar os chats
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useEffect(() => {
-    if (!isMounted) return;
+    // Se o currentChat já está sincronizado com a URL, não faz nada
+    if (currentChatId === chatId) {
+      return;
+    }
 
+    // Verifica se a análise existe
     const chat = chats.find(c => c.id === chatId);
     if (chat) {
       setCurrentChat(chatId);
     } else {
+      // Se não existe, redireciona para home
       router.push('/');
     }
-  }, [chatId, chats, isMounted, setCurrentChat, router]);
+  }, [chatId, currentChatId, chats, setCurrentChat, router]);
 
-  // Mostra loading enquanto o contexto ainda não sincronizou com o chatId da URL
-  if (!isMounted || currentChatId !== chatId) {
+  // Mostra loading enquanto o currentChatId não corresponde ao chatId da URL
+  if (currentChatId !== chatId) {
     return (
       <main className="flex-1 overflow-auto bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Carregando análise...</p>
