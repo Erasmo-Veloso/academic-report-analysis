@@ -30,7 +30,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Ver projecto ao vivo"
+            aria-label="Ver projeto ao vivo"
             className="shrink-0 mt-0.5 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ExternalLink className="w-4 h-4" />

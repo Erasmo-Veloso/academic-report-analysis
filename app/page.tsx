@@ -110,7 +110,7 @@ export default function Page() {
           {/* Project Card */}
           <div className="pt-2">
             <p className="text-xs text-muted-foreground/60 text-center mb-3 uppercase tracking-wide font-medium">
-              Sobre este projecto
+              Sobre este projeto
             </p>
             <ProjectCard project={projectData} />
           </div>
