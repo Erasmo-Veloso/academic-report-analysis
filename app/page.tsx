@@ -11,6 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowRight, FileText, BarChart3, Zap } from "lucide-react";
+import { ProjectCard } from "@/components/project-card";
+import { projectData } from "@/lib/project-data";
 
 export default function Page() {
   const { createChat } = useChat();
@@ -104,6 +106,14 @@ export default function Page() {
             Suas análises são armazenadas localmente no seu navegador. Configure
             sua chave de API em Configurações.
           </p>
+
+          {/* Project Card */}
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground/60 text-center mb-3 uppercase tracking-wide font-medium">
+              Sobre este projecto
+            </p>
+            <ProjectCard project={projectData} />
+          </div>
         </div>
       </div>
     </main>
